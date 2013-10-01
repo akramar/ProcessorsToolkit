@@ -1,0 +1,72 @@
+﻿ ------WebKitFormBoundaryO9Gb52Bh0fcT27A8
+Content-Disposition: form-data; name="ctl00_ScriptManager1_TSM"
+
+;;System.Web.Extensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35:en-US:caf9918e-87b7-4f16-b8e8-f81c9ff8f4ab:ea597d4b:b25378d2;Telerik.Web.UI, Version=2013.1.220.40, Culture=neutral, PublicKeyToken=121fae78165ba3d4:en-US:d8ebf3de-0179-4fa4-89e6-a030e0cf94a1:e330518b:16e4e7cd:f7645509:24ee1bba:2003d0b8:1e771326:c8618e41:a1a4383a:68f76a79:874f8ea2:2a2fc429:7165f74:58366029:f46195d3:19620875:39040b5c;AjaxControlToolkit, Version=3.0.30930.28736, Culture=neutral, PublicKeyToken=28f01b0e84b6d53e:en-US:b0eefc76-0092-471b-ab62-f3ddc8240d71:dc2d6e36:b14bb7d5:a3e10fa2:13f47f54:701e375f:1d056c78:3c55b13e:de51bc8f:a4313c7a
+------WebKitFormBoundaryO9Gb52Bh0fcT27A8
+Content-Disposition: form-data; name="__EVENTTARGET"
+
+
+------WebKitFormBoundaryO9Gb52Bh0fcT27A8
+Content-Disposition: form-data; name="__EVENTARGUMENT"
+
+
+------WebKitFormBoundaryO9Gb52Bh0fcT27A8
+Content-Disposition: form-data; name="__VIEWSTATE"
+    <!-- shit ton of viewstate  -->
+    ------WebKitFormBoundaryO9Gb52Bh0fcT27A8
+Content-Disposition: form-data; name="__EVENTVALIDATION"
+
+/wEWHQKP8I6lDAKkmdTPDQLup6zPBwLDyO27CQLup6zPBwLWm4zHDQLWm/jrBALWm7T9DgLi8ca0DgKcpJelBgLokY+KAwLU6dXfCgLCoqnLDAKD893eDgKezt+CBgKVrfGXAwKwhrTWDwK14arNAQKrjdjbCwLQld6iDwKJ48DAAgKzp/yXDgLD3e2ZBgLvh4luAvfMsqgCAvf7ytkGAuH3tIEMApH4jeMBAvuOjaAOduuWi607DDf3UL6ROJPBOp1SFFc3uFD2134VFwIeKo0=
+------WebKitFormBoundaryO9Gb52Bh0fcT27A8
+Content-Disposition: form-data; name="ctl00_mainMenu_ClientState"
+
+
+------WebKitFormBoundaryO9Gb52Bh0fcT27A8
+Content-Disposition: form-data; name="ctl00_BreadCrumbSiteMap_ClientState"
+
+
+------WebKitFormBoundaryO9Gb52Bh0fcT27A8
+Content-Disposition: form-data; name="ctl00_ContentPlaceHolder1_RadProgressManager1_ClientState"
+
+
+------WebKitFormBoundaryO9Gb52Bh0fcT27A8
+Content-Disposition: form-data; name="ctl00$ContentPlaceHolder1$textBoxTitle"
+
+011 Morgan - Disclosures 1003p2 (complete) signed
+------WebKitFormBoundaryO9Gb52Bh0fcT27A8
+Content-Disposition: form-data; name="ctl00_ContentPlaceHolder1_RadProgressArea1_ClientState"
+
+
+------WebKitFormBoundaryO9Gb52Bh0fcT27A8
+Content-Disposition: form-data; name="ctl00$ContentPlaceHolder1$fileUpload"; filename="011 Morgan - Disclosures 1003p2 (complete) signed.pdf"
+Content-Type: application/pdf
+
+<!--- the PDF file bytes ---->
+
+
+
+------WebKitFormBoundaryO9Gb52Bh0fcT27A8
+Content-Disposition: form-data; name="ctl00$ContentPlaceHolder1$buttonUploadDocument"
+
+Upload Document
+------WebKitFormBoundaryO9Gb52Bh0fcT27A8
+Content-Disposition: form-data; name="ctl00_ContentPlaceHolder1_buttonUploadDocument_ClientState"
+
+
+------WebKitFormBoundaryO9Gb52Bh0fcT27A8
+Content-Disposition: form-data; name="ctl00$ContentPlaceHolder1$gridViewConditions$ctl00$ctl06$checkBoxSelectCondition"
+
+on
+------WebKitFormBoundaryO9Gb52Bh0fcT27A8
+Content-Disposition: form-data; name="ctl00_ContentPlaceHolder1_gridViewConditions_ClientState"
+
+
+------WebKitFormBoundaryO9Gb52Bh0fcT27A8
+Content-Disposition: form-data; name="ctl00_radToolTip_ClientState"
+
+
+------WebKitFormBoundaryO9Gb52Bh0fcT27A8
+Content-Disposition: form-data; name="ctl00$textBoxSearch"
+
+
+------WebKitFormBoundaryO9Gb52Bh0fcT27A8--

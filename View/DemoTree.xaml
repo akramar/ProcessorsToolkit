@@ -1,0 +1,52 @@
+﻿
+<Window x:Class="ProcessorsToolkit.View.DemoTree"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Window1" Height="474" Width="781">
+    <Grid>
+        <ListView Margin="4,8,0,3" Name="listView1" HorizontalAlignment="Left" Width="367" BorderBrush="Black" ItemsSource="{Binding}" >
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Name" Width="Auto">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="{Binding ImagePath}"/>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Ext" DisplayMemberBinding="{Binding Ext}" Width="Auto"/>
+                    <GridViewColumn Header="Size" DisplayMemberBinding="{Binding Size}" Width="Auto"/>
+                    <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}" Width="Auto"/>
+                </GridView>
+            </ListView.View>
+            <ListView.ItemContainerStyle>
+                <Style>
+                    <EventSetter Event="ListViewItem.MouseDoubleClick" Handler="listViewItem_MouseDoubleClick"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+
+        <ListView Margin="377,7,2,3" Name="listView2" BorderBrush="Black" ItemsSource="{Binding}" >
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Name" Width="100">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="{Binding ImagePath}"/>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Ext" DisplayMemberBinding="{Binding Ext}" Width="Auto"/>
+                    <GridViewColumn Header="Size" DisplayMemberBinding="{Binding Size}" Width="Auto"/>
+                    <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}" Width="Auto"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</Window>

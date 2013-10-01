@@ -1,0 +1,133 @@
+﻿<UserControl x:Class="ProcessorsToolkit.View.BorrFilesUC"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <ListView Margin="0" Name="ListView1" BorderBrush="Black" 
+                  ItemsSource="{Binding Path=FolderFiles}" SelectionChanged="ListView1_SelectionChanged" SizeChanged="ListView1_OnSizeChanged"   >
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Filename">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+
+
+                                    <StackPanel.Resources>
+                                        <Style x:Key="DisplayNameStyle" TargetType="{x:Type TextBox}" >
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsBeingEdited}" Value="true">
+                                                    <Setter Property="TextBox.Foreground" Value="Red" />
+                                                    <Setter Property="TextBox.IsReadOnly" Value="False"></Setter>
+                                                    <Setter Property="Cursor" Value="IBeam"></Setter>
+                                                    <Setter Property="BorderThickness" Value="1"></Setter>
+
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding IsBeingEdited}" Value="false">
+                                                    <Setter Property="TextBox.Foreground" Value="Green" />
+                                                    <Setter Property="TextBox.IsReadOnly" Value="True"></Setter>
+                                                    <Setter Property="Cursor" Value="Arrow"></Setter>
+                                                    <Setter Property="BorderThickness" Value="0"></Setter>
+
+
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Resources>
+                                    <!--<TextBlock.Style>
+                                        <Style>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsBeingEdited}" Value="true">
+                                                    <Setter Property="TextBlock.Foreground" Value="Red" />
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding IsBeingEdited}" Value="false">
+                                                    <Setter Property="TextBlock.Foreground" Value="Green" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+
+                                    <TextBlock Style="{StaticResource DisplayNameStyle}">
+
+                                        <Binding Path="DisplayName">
+                                            
+                                        </Binding>
+                                        
+                                        
+                                        <MultiBinding StringFormat="{}{0} ({1})">
+                                            <Binding Path="ReturnedData.Change" />
+                                            <Binding Path="ReturnedData.ChangePercentage" />
+                                        </MultiBinding>
+                                    </TextBlock>-->
+
+
+                                    <TextBox  Style="{StaticResource DisplayNameStyle}" Text="{Binding DisplayName}" />
+
+
+
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Rename" Width="60">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Cursor="Hand" MouseLeftButtonDown="UIElement_OnMouseLeftButtonDown" Source="{Binding EditImgPath}" Width="16" Margin="13,0,0,0" ></Image>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Modified" Width="90">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding LastModified}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Size" Width="40">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding SizeMB}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <!--
+                    <GridViewColumn>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox IsChecked="{Binding IsSelected}" CommandParameter="{Binding Fullpath}" Unchecked="ButtonBase_CheckChanged" Checked="ButtonBase_CheckChanged"></CheckBox>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    -->
+                </GridView>
+            </ListView.View>
+            <ListView.ItemContainerStyle>
+                <Style>
+                    <Setter Property="ListViewItem.BorderBrush" Value="{x:Null}" />
+                    <Setter Property="ListViewItem.Background" Value="{x:Null}" />
+                    <EventSetter Event="ListViewItem.MouseDoubleClick" Handler="listViewItem_MouseDoubleClick"/>
+                </Style>
+                
+               
+            </ListView.ItemContainerStyle>
+
+            
+        </ListView>
+    </Grid>
+</UserControl>

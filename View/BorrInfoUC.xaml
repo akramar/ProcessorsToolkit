@@ -1,0 +1,68 @@
+﻿<UserControl x:Class="ProcessorsToolkit.View.BorrInfoUC"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" >
+    <Grid Margin="0">
+
+        <StackPanel Name="MainInfoSP" >
+
+            <StackPanel.Resources>
+                <Style x:Key="InnerSp" TargetType="{x:Type StackPanel}" >
+                    <Setter Property="Orientation" Value="Horizontal"></Setter>
+                    <Setter Property="StackPanel.Margin" Value="5,3" ></Setter>
+                    <Setter Property="StackPanel.Orientation" Value="Horizontal"></Setter>
+                </Style>
+                <Style TargetType="{x:Type TextBlock}">
+                    <Setter Property="Margin" Value="6,3,3,0"></Setter>
+                    <Setter Property="HorizontalAlignment" Value="Right"></Setter>
+                </Style>
+            </StackPanel.Resources>
+            
+            <StackPanel Style="{StaticResource InnerSp}">
+                <TextBlock Width="76"> Borrower: </TextBlock>
+                <TextBox Width="200" IsReadOnly="True" Text="{Binding Path=BorrName_Combined, Mode=OneWay}" />
+                <TextBlock> SSN: </TextBlock>
+                <TextBox Width="80" IsReadOnly="True" Text="{Binding Path=BorrSSN_Pretty, Mode=OneWay}" />
+                <TextBlock> DOB: </TextBlock>
+                <TextBox Width="70" IsReadOnly="True" Text="{Binding Path=BorrDOB_Pretty, Mode=OneWay}" />
+                <TextBlock> Email: </TextBlock>
+                <TextBox Width="170" IsReadOnly="True" Text="{Binding Path=BorrEmail, Mode=OneWay}" />
+            </StackPanel>
+
+            <StackPanel Style="{StaticResource InnerSp}">
+                <TextBlock Width="76"> Co-Borrower:</TextBlock>
+                <TextBox Width="200" IsReadOnly="True" Text="{Binding Path=CoBorrName_Combined, Mode=OneWay}" />
+                <TextBlock> SSN:</TextBlock>
+                <TextBox Width="80" IsReadOnly="True" Text="{Binding Path=CoBorrSSN_Pretty, Mode=OneWay}" />
+                <TextBlock> DOB:</TextBlock>
+                <TextBox Width="70" IsReadOnly="True" Text="{Binding Path=CoBorrDOB_Pretty, Mode=OneWay}" />
+                <TextBlock> Email:</TextBlock>
+                <TextBox Width="170" IsReadOnly="True" Text="{Binding Path=CoBorrEmail, Mode=OneWay}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource InnerSp}">
+                <TextBlock Width="76"> Address:</TextBlock>
+                <TextBox Width="419" IsReadOnly="True" Text="{Binding Path=SubjAddr_Combined, Mode=OneWay}" />
+
+                <TextBlock> Occupancy:</TextBlock>
+                <TextBox Width="140" IsReadOnly="True" Text="{Binding Path=Occupancy, Mode=OneWay}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource InnerSp}">
+                <TextBlock Width="76"> Purpose:</TextBlock>
+                <TextBox Width="100" IsReadOnly="True" Text="{Binding Path=LoanPurpose, Mode=OneWay}" />
+                <TextBlock> LTV:</TextBlock>
+                <TextBox Width="100" IsReadOnly="True" Text="{Binding Path=LTV_Pretty, Mode=OneWay}" />
+                <TextBlock> Gross Loan:</TextBlock>
+                <TextBox Width="100" IsReadOnly="True" Text="{Binding Path=LoanAmtGross, StringFormat=n, Mode=OneWay}" />
+            </StackPanel>
+            
+            
+        </StackPanel>
+        
+        
+
+    </Grid>
+
+
+</UserControl>
