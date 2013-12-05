@@ -18,10 +18,10 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
             string sessionKey, string containerKey, CookieCollection sessionCookies)
         {
             int responseCode = 0;
-            if (false) // skip for debug, we know this portion works
+            if (false) // "false" for debug, we know this portion works
             {
                 System.Threading.Thread.Sleep(2000);
-                responseCode = 1;
+                responseCode = 0;
 
             }
             else

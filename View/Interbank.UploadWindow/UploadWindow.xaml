@@ -1,0 +1,10 @@
+﻿<Window x:Class="ProcessorsToolkit.View.Interbank.UploadWindow.UploadWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Upload Documents" Height="488" Width="669"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowInTaskbar="False" Loaded="MainWindow_OnLoaded" Closed="UploadWindow_OnClosed">
+
+    <Grid Margin="10,10,10,10">
+        <ContentControl x:Name="ContentArea" HorizontalAlignment="Stretch"></ContentControl>
+    </Grid>
+</Window>

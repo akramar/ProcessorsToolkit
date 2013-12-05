@@ -11,7 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ProcessorsToolkit.ViewModel.PRMGUploadWindow;
+using ProcessorsToolkit.ViewModel.PRMG;
 
 namespace ProcessorsToolkit.View.PRMGUploadWindow
 {
@@ -20,33 +20,27 @@ namespace ProcessorsToolkit.View.PRMGUploadWindow
     /// </summary>
     public partial class SecretQuestionUC : UserControl
     {
-        //private UploadWindowVM _parentVM;
+        private UploadWindowVM _parentVM;
 
-
-        public SecretQuestionUC()//UploadWindowVM parentVM)
+        public SecretQuestionUC(UploadWindowVM parentVM)
         {
-            //_parentVM = parentVM;
+            _parentVM = parentVM;
 
             InitializeComponent();
             Loaded += SecretQuestionRequest_Loaded;
-
-
         }
 
         private void SecretQuestionRequest_Loaded(object sender, RoutedEventArgs e)
         {
-
-            secretQTB.Text = UploadWindowVM.CurrPRMGSession.SecretQuestionQuestion;
+            secretQTB.Text = _parentVM.CurrPRMGSession.SecretQuestionQuestion;
             secretAnswerTB.Focus();
-            //secretAnswerTB.Text = "apples";
             Cursor = Cursors.Arrow;
         }
 
         private void SubmitAnswer_Click(object sender, RoutedEventArgs e)
         {
-            UploadWindowVM.CurrPRMGSession.SecretQuestionAnswer = secretAnswerTB.Text;
-
-            UploadWindowVM.OnReceivedSecretAnswer();
+            _parentVM.CurrPRMGSession.SecretQuestionAnswer = secretAnswerTB.Text;
+            _parentVM.OnReceivedSecretAnswer();
         }
     }
 }

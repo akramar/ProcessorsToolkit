@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Web;
 using HtmlAgilityPack;
 
 namespace ProcessorsToolkit.Model.Interbank.UploadSession
@@ -11,20 +12,25 @@ namespace ProcessorsToolkit.Model.Interbank.UploadSession
     public class Session
     {
 
-
+        public Dictionary<string,string> LoanIdsNames { get; set; } 
         public CookieCollection SessionCookies; // = new CookieContainer();
-        private Dictionary<string, string> _formVals = new Dictionary<string, string>();
+        public Dictionary<string, string> FormVals = new Dictionary<string, string>();
         //private UploadWindowVM _parentVM;
         public string Username { get; set; }
         public string Password { get; set; }
         public bool IsCompleteConnection { get; set; }
-        private List<string> _pipelineRows { get; set; }
-        private List<string> _loanIds { get; set; } 
+        private List<string> PipelineRows { get; set; }
+        private List<string> LoanIds { get; set; }
+        //public LoanSearchResultItem SelectedLoan { get; set; }
+        public List<LoanCondition> SelectedLoansConditions { get; set; } 
+        
 
         public Session()
         {
-            _loanIds = new List<string>();
-            _pipelineRows = new List<string>();
+            SelectedLoansConditions = new List<LoanCondition>();
+            LoanIdsNames = new Dictionary<string, string>();
+            LoanIds = new List<string>();
+            PipelineRows = new List<string>();
             IsCompleteConnection = false;
             SessionCookies = new CookieCollection();
         }
@@ -90,26 +96,29 @@ namespace ProcessorsToolkit.Model.Interbank.UploadSession
 
             System.Diagnostics.Debug.WriteLine("Hit Step2_PostUsername");
 
+            /*
             var postParams = new Dictionary<string, string>()
                 {
                     {"&ctl00_mainMenu_ClientState=", ""},
                     {"&ctl00_BreadCrumbSiteMap_ClientState=", ""},
                     {"&ctl00%24ContentPlaceHolder1%24loginToDataTrac%24UserName=", "akramar%40houseloans.net"},
-                    {"&ctl00%24ContentPlaceHolder1%24loginToDataTrac%24Password=", "EF8LHVNH"},
+                    {"&ctl00%24ContentPlaceHolder1%24loginToDataTrac%24Password=", "INTERBANKPASSWORD, escaped?"},
                     {"&ctl00%24ContentPlaceHolder1%24loginToDataTrac%24LoginButton=", "Log+In"},
                     {"&ctl00_radToolTip_ClientState=", ""},
                     {"&ctl00%24textBoxSearch=", ""}
                 };
-            
+            */
+            var usernameEscaped = HttpUtility.UrlEncode(Username);
+            var pwdEscaped = HttpUtility.UrlEncode(Password);
 
-            _formVals.Add("ctl00%24ContentPlaceHolder1%24loginToDataTrac%24UserName", "akramar%40houseloans.net");
-            _formVals.Add("ctl00%24ContentPlaceHolder1%24loginToDataTrac%24Password", "EF8LHVNH");
-            _formVals.Add("ctl00%24ContentPlaceHolder1%24loginToDataTrac%24LoginButton", "Log+In");
-            _formVals.Add("ctl00%24textBoxSearch", "");
+            FormVals.Add("ctl00%24ContentPlaceHolder1%24loginToDataTrac%24UserName", usernameEscaped);
+            FormVals.Add("ctl00%24ContentPlaceHolder1%24loginToDataTrac%24Password", pwdEscaped);
+            FormVals.Add("ctl00%24ContentPlaceHolder1%24loginToDataTrac%24LoginButton", "Log+In");
+            FormVals.Add("ctl00%24textBoxSearch", "");
 
             //omit extras & and = above
             //var postData = string.Join("", postParams.Select(p => p.Key + p.Value));
-            var postData = String.Join("&", _formVals.Select(v => v.Key + "=" + v.Value));
+            var postData = String.Join("&", FormVals.Select(v => v.Key + "=" + v.Value));
             var referer = "https://portal.interbankwholesale.com/IBPortal/Login.aspx";
 
 
@@ -129,12 +138,12 @@ namespace ProcessorsToolkit.Model.Interbank.UploadSession
             Cache-Control: max-age=0
             Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/
             /*;q=0.8
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1652.0 Safari/537.36
-Referer: https://portal.interbankwholesale.com/IBPortal/Login.aspx
-Accept-Encoding: gzip,deflate,sdch
-Accept-Language: en-US,en;q=0.8
-Cookie: ASP.NET_SessionId=no34bx4kb15juj4lbavf2ciz; .ASPXINTERBANK=48BE739604BA3471D0DE458EF65EE5B6A78C85C0F5C083AA3BAD389FD4784AD0B936EE2930BC4DD83A3888B52D9038670073F71C8AD7021502FD464710D941E961D28168920F3F109EA2AC6E39D07AB663979E7E15AADD8D65047F6B2FBEAEA6FB7F27ACCE4347A69924EE87693F9CCF9C11F3E104E7D54782F4948B822DABA2BA0B4BD727BD89266DAE1E99FA0D013BD26DB9D4657EECFE3E9B141BA3216605; BNI_BARRACUDA_LB_COOKIE=0000000000000000000000002406a8c000005000
-*/
+            User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1652.0 Safari/537.36
+            Referer: https://portal.interbankwholesale.com/IBPortal/Login.aspx
+            Accept-Encoding: gzip,deflate,sdch
+            Accept-Language: en-US,en;q=0.8
+            Cookie: ASP.NET_SessionId=no34bx4kb15juj4lbavf2ciz; .ASPXINTERBANK=48BE739604BA3471D0DE458EF65EE5B6A78C85C0F5C083AA3BAD389FD4784AD0B936EE2930BC4DD83A3888B52D9038670073F71C8AD7021502FD464710D941E961D28168920F3F109EA2AC6E39D07AB663979E7E15AADD8D65047F6B2FBEAEA6FB7F27ACCE4347A69924EE87693F9CCF9C11F3E104E7D54782F4948B822DABA2BA0B4BD727BD89266DAE1E99FA0D013BD26DB9D4657EECFE3E9B141BA3216605; BNI_BARRACUDA_LB_COOKIE=0000000000000000000000002406a8c000005000
+            */
 
             System.Diagnostics.Debug.WriteLine("Hit Step3_FetchDashboard");
 
@@ -142,6 +151,8 @@ Cookie: ASP.NET_SessionId=no34bx4kb15juj4lbavf2ciz; .ASPXINTERBANK=48BE739604BA3
                                                        SessionCookies,
                                                        "https://portal.interbankwholesale.com/IBPortal/Login.aspx");
             SessionCookies.Add(responseObj.ResponseCookies);
+            if (true)
+                IsCompleteConnection = true;
 
         }
 
@@ -167,28 +178,28 @@ Cookie: ASP.NET_SessionId=no34bx4kb15juj4lbavf2ciz; .ASPXINTERBANK=48BE739604BA3
             SessionCookies.Add(responseObj.ResponseCookies);
 
             fillformvals(responseObj.ResponseHtml);
-            _formVals["ctl00_mainMenu_ClientState"] = "";
-            _formVals["ctl00_BreadCrumbSiteMap_ClientState"] = "";
-            _formVals["ctl00%24ContentPlaceHolder1%24dropdownlistKeyDates"] = "Changed";
-            _formVals["ctl00%24ContentPlaceHolder1%24dropdownlistLoanPurpose"] = "All";
+            FormVals["ctl00_mainMenu_ClientState"] = "";
+            FormVals["ctl00_BreadCrumbSiteMap_ClientState"] = "";
+            FormVals["ctl00%24ContentPlaceHolder1%24dropdownlistKeyDates"] = "Changed";
+            FormVals["ctl00%24ContentPlaceHolder1%24dropdownlistLoanPurpose"] = "All";
 
-            _formVals["ctl00%24ContentPlaceHolder1%24textboxFromDate"] = "7%2F1%2F2013";
-            _formVals["ctl00%24ContentPlaceHolder1%24textboxToDate"] = "9%2F29%2F2013";
-            _formVals["ctl00%24ContentPlaceHolder1%24textBoxQuickFind"] = "";
+            FormVals["ctl00%24ContentPlaceHolder1%24textboxFromDate"] = "7%2F1%2F2013";
+            FormVals["ctl00%24ContentPlaceHolder1%24textboxToDate"] = "9%2F29%2F2013";
+            FormVals["ctl00%24ContentPlaceHolder1%24textBoxQuickFind"] = "";
             //_formVals["ctl00%24ContentPlaceHolder1%24radGridPipeline%24ctl00%24ctl04%24GECBtnExpandColumn"] = "+"; //ctl00$ContentPlaceHolder1$radGridPipeline$ctl00$ctl04$GECBtnExpandColumn <- UW Denied
                                                                                                                    //ctl00$ContentPlaceHolder1$radGridPipeline$ctl00$ctl07$GECBtnExpandColumn <- UW approved
 
-            _formVals["ctl00_ContentPlaceHolder1_radGridPipeline_ClientState"] = "";
-            _formVals["ctl00_radToolTip_ClientState"] = "";
-            _formVals["ctl00%24textBoxSearch"] = "";
+            FormVals["ctl00_ContentPlaceHolder1_radGridPipeline_ClientState"] = "";
+            FormVals["ctl00_radToolTip_ClientState"] = "";
+            FormVals["ctl00%24textBoxSearch"] = "";
 
-            var responseHtmlDoc = new HtmlAgilityPack.HtmlDocument();
+            var responseHtmlDoc = new HtmlDocument();
             responseHtmlDoc.LoadHtml(responseObj.ResponseHtml);
 
 
             foreach (HtmlNode node in responseHtmlDoc.DocumentNode.Descendants("input"))
                 if (node.Attributes["type"] != null && node.Attributes["type"].Value == "submit" && node.Attributes["name"].Value.StartsWith("ctl00$ContentPlaceHolder1$radGridPipeline$ctl00$"))
-                    _pipelineRows.Add(System.Web.HttpUtility.UrlEncode(node.Attributes["name"].Value));
+                    PipelineRows.Add(HttpUtility.UrlEncode(node.Attributes["name"].Value));
 
 
 
@@ -196,7 +207,7 @@ Cookie: ASP.NET_SessionId=no34bx4kb15juj4lbavf2ciz; .ASPXINTERBANK=48BE739604BA3
 
         }
         //Step 5 - POST pipeline searches
-        public void Step5_PostSearchQueries()
+        public Dictionary<string, string> Step5_PostSearchQueries()
         {   /*
             POST https://portal.interbankwholesale.com/IBPortal/General/Pipeline.aspx HTTP/1.1
             Host: portal.interbankwholesale.com
@@ -217,11 +228,12 @@ Cookie: ASP.NET_SessionId=no34bx4kb15juj4lbavf2ciz; .ASPXINTERBANK=48BE739604BA3
             //var postData = String.Join("&", _formVals.Select(v => v.Key + "=" + v.Value));
             var finalPageOutput = "";
 
-            foreach (var rowCtrl in _pipelineRows)
+            //TODO: can we make these requests in parallel?
+            foreach (var rowCtrl in PipelineRows)
             {
                 System.Diagnostics.Debug.WriteLine("Getting row: " + rowCtrl);
 
-                var postData = String.Join("&", _formVals.Select(v => v.Key + "=" + v.Value));
+                var postData = String.Join("&", FormVals.Select(v => v.Key + "=" + v.Value));
 
                 var postDataWithRow = postData + "&" + rowCtrl + "=+";
                 
@@ -232,17 +244,22 @@ Cookie: ASP.NET_SessionId=no34bx4kb15juj4lbavf2ciz; .ASPXINTERBANK=48BE739604BA3
 
                 SessionCookies.Add(responseObj.ResponseCookies);
 
+                // "7%2F1%2F2013"
+                var searchDateFrom = HttpUtility.UrlEncode(DateTime.UtcNow.AddMonths(-3).ToString("d"));
+                // "9%2F29%2F2013"
+                var searchDateTo = HttpUtility.UrlEncode(DateTime.UtcNow.ToString("d"));
+
                 fillformvals(responseObj.ResponseHtml);
-                _formVals["ctl00_mainMenu_ClientState"] = "";
-                _formVals["ctl00_BreadCrumbSiteMap_ClientState"] = "";
-                _formVals["ctl00%24ContentPlaceHolder1%24dropdownlistKeyDates"] = "Changed";
-                _formVals["ctl00%24ContentPlaceHolder1%24dropdownlistLoanPurpose"] = "All";
-                _formVals["ctl00%24ContentPlaceHolder1%24textboxFromDate"] = "7%2F1%2F2013";
-                _formVals["ctl00%24ContentPlaceHolder1%24textboxToDate"] = "9%2F29%2F2013";
-                _formVals["ctl00%24ContentPlaceHolder1%24textBoxQuickFind"] = "";
-                _formVals["ctl00_ContentPlaceHolder1_radGridPipeline_ClientState"] = "";
-                _formVals["ctl00_radToolTip_ClientState"] = "";
-                _formVals["ctl00%24textBoxSearch"] = "";
+                FormVals["ctl00_mainMenu_ClientState"] = "";
+                FormVals["ctl00_BreadCrumbSiteMap_ClientState"] = "";
+                FormVals["ctl00%24ContentPlaceHolder1%24dropdownlistKeyDates"] = "Changed";
+                FormVals["ctl00%24ContentPlaceHolder1%24dropdownlistLoanPurpose"] = "All";
+                FormVals["ctl00%24ContentPlaceHolder1%24textboxFromDate"] = searchDateFrom;
+                FormVals["ctl00%24ContentPlaceHolder1%24textboxToDate"] = searchDateTo;
+                FormVals["ctl00%24ContentPlaceHolder1%24textBoxQuickFind"] = "";
+                FormVals["ctl00_ContentPlaceHolder1_radGridPipeline_ClientState"] = "";
+                FormVals["ctl00_radToolTip_ClientState"] = "";
+                FormVals["ctl00%24textBoxSearch"] = "";
 
                 //if (_pipelineRows.Last() == rowCtrl)
                 finalPageOutput = responseObj.ResponseHtml;
@@ -254,8 +271,11 @@ Cookie: ASP.NET_SessionId=no34bx4kb15juj4lbavf2ciz; .ASPXINTERBANK=48BE739604BA3
             responseHtmlDoc.LoadHtml(finalPageOutput);
             
             //TODO: we need to get the actual borr name, not just loan num
+            //TODO: we include this in the separate thread, add them to common collection
             var loanRows = responseHtmlDoc.DocumentNode.Descendants("tr")
                 .Where(d => d.Attributes.Contains("class") && (d.Attributes["class"].Value.Contains("rgRow") || d.Attributes["class"].Value.Contains("rgAltRow")));
+
+            var borrNames = loanRows.Where(n => n.Descendants("td").Count() >= 7).Select(n => n.Descendants("td").ElementAt(6).InnerText);
 
             //var links = loanRows.Select(r => r.Descendants("a").First());
             
@@ -265,70 +285,62 @@ Cookie: ASP.NET_SessionId=no34bx4kb15juj4lbavf2ciz; .ASPXINTERBANK=48BE739604BA3
 
             //LoanInfo.aspx?filenum=
 
-            _loanIds = links.Select(l => l.InnerText).ToList();
+            LoanIds = links.Select(l => l.InnerText).ToList();
 
+            LoanIdsNames.Clear();
+            LoanIdsNames = LoanIds.Zip(borrNames, (k, v) => new {k, v}).ToDictionary(x => x.k, x => x.v);
 
-            /******* move this to our separate method later  ***/
+            return LoanIdsNames;
+        }
 
-            var responseObjUploadPg =
-                ConnectionMethods.IBWGet(
-                    "https://portal.interbankwholesale.com/IBPortal/Docs/UploadDocument.aspx?filenum=88284420&queue=1",
-                    SessionCookies);
+        public List<LoanCondition> FillLoanConditions(LoanSearchResultItem selectedLoan)
+        {
+            //"https://portal.interbankwholesale.com/IBPortal/Docs/UploadDocument.aspx?filenum=88284420&queue=1"
+            var queryUrl = String.Format("https://portal.interbankwholesale.com/IBPortal/Docs/UploadDocument.aspx?filenum={0}&queue=1", selectedLoan.IBWLoanNum);
+
+            var responseObjUploadPg = ConnectionMethods.IBWGet(queryUrl, SessionCookies);
 
             SessionCookies.Add(responseObjUploadPg.ResponseCookies);
             fillformvals(responseObjUploadPg.ResponseHtml);
 
-            var filePath = @"C:\Users\Alain Kramar\Documents\Loans\Morgan\conditions\108 Morgan - VOE (Olivia) complete.pdf";
-            var viewState = System.Web.HttpUtility.UrlDecode(_formVals.First(v => v.Key == "__VIEWSTATE").Value);
-            var eventValidation = System.Web.HttpUtility.UrlDecode(_formVals.First(v => v.Key == "__EVENTVALIDATION").Value);
+            var responseHtmlDoc = new HtmlDocument();
+            responseHtmlDoc.LoadHtml(responseObjUploadPg.ResponseHtml);
 
-            var formItems = new List<Tuple<string, string>>
+            var conditionsRows = responseHtmlDoc.GetElementbyId("ctl00_ContentPlaceHolder1_gridViewConditions_ctl00").Descendants("tbody").First().Descendants("tr");
+
+            //var conditions = new List<LoanCondition>();
+            SelectedLoansConditions.Clear();
+
+            foreach (var row in conditionsRows)
+            {
+                var boxes = row.Descendants("td").ToArray();
+                SelectedLoansConditions.Add(new LoanCondition
                 {
-                    new Tuple<string, string>("ctl00_ScriptManager1_TSM", ""),
-                    new Tuple<string, string>("__EVENTTARGET", ""),
-                    new Tuple<string, string>("__EVENTARGUMENT", ""),
-                    new Tuple<string, string>("__VIEWSTATE", viewState),
-                    new Tuple<string, string>("__EVENTVALIDATION", eventValidation),
-                    new Tuple<string, string>("ctl00_mainMenu_ClientState", ""),
-                    new Tuple<string, string>("ctl00_BreadCrumbSiteMap_ClientState", ""),
-                    new Tuple<string, string>("ctl00_ContentPlaceHolder1_RadProgressManager1_ClientState", ""),
-                    new Tuple<string, string>("ctl00$ContentPlaceHolder1$textBoxTitle", Path.GetFileNameWithoutExtension(filePath)),
-                    new Tuple<string, string>("ctl00_ContentPlaceHolder1_RadProgressArea1_ClientState", ""),
-                    new Tuple<string, string>("ctl00$ContentPlaceHolder1$buttonUploadDocument", "Upload Document"),
-                    new Tuple<string, string>("ctl00_ContentPlaceHolder1_buttonUploadDocument_ClientState", ""),
-                    //new Tuple<string, string>("ctl00$ContentPlaceHolder1$gridViewConditions$ctl00$ctl06$checkBoxSelectCondition", "on"),//this is a condition checkbox
-                    new Tuple<string, string>("ctl00_ContentPlaceHolder1_gridViewConditions_ClientState", ""),
-                    new Tuple<string, string>("ctl00_radToolTip_ClientState", ""),
-                    new Tuple<string, string>("ctl00$textBoxSearch", ""),
-                    new Tuple<string, string>("ctl00$ContentPlaceHolder1$gridViewConditions$ctl00$ctl06$checkBoxSelectCondition", "on")
-                };
+                    CheckboxName = boxes[0].Descendants("span").ElementAt(0).Descendants("input").First().GetAttributeValue("name", ""),
+                    PriorTo = boxes[1].InnerText == "D" ? LoanCondition.PriorToTypes.D : LoanCondition.PriorToTypes.F,
+                    Number = Convert.ToInt32(boxes[2].InnerText),
+                    Description = boxes[3].Descendants("span").First().InnerText.Replace(Environment.NewLine, " "),
+                    ConditionId = boxes[4].InnerText
+                });
+            }
 
-
-            var morganLoanNum = "88284420";
-
-
-
-            var uploadCode = new SingleFileUpload();
-
-            uploadCode.HttpUploadFile(filePath, formItems, SessionCookies, morganLoanNum);
-
-
-
-
-
-
-
-
+            SelectedLoansConditions.Sort((c1, c2) => c1.Number.CompareTo(c2.Number));
+            
+            return SelectedLoansConditions;
 
         }
+
+
+
         //Step 6 - 
         //Step 7 - 
         //Step 8 - 
+        
 
-
+        //This can really be cut down to just getting __viewstate __eventvalidtion, etc
         private void fillformvals(string responseHtml)
         {
-            _formVals = new Dictionary<string, string>();
+            FormVals = new Dictionary<string, string>();
             if (!String.IsNullOrEmpty(responseHtml))
             {
                 var responseHtmlDoc = new HtmlAgilityPack.HtmlDocument();
@@ -340,7 +352,7 @@ Cookie: ASP.NET_SessionId=no34bx4kb15juj4lbavf2ciz; .ASPXINTERBANK=48BE739604BA3
 
                 foreach (HtmlNode node in responseHtmlDoc.DocumentNode.Descendants("input"))
                     if (node.Attributes["type"] != null && node.Attributes["type"].Value == "hidden")
-                        _formVals.Add(System.Web.HttpUtility.UrlEncode(node.GetAttributeValue("name", "")), System.Web.HttpUtility.UrlEncode(node.GetAttributeValue("value", "")));
+                        FormVals.Add(System.Web.HttpUtility.UrlEncode(node.GetAttributeValue("name", "")), System.Web.HttpUtility.UrlEncode(node.GetAttributeValue("value", "")));
 
             }
 

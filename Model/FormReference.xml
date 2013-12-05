@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<FormReference>
+<Lenders>
+    <Lender name="IBW">
+        <Forms>
+            <Form name="InitialDisc_CA">
+                <Filename>Interbank_DisclosurePkg_rev4b_(CA).pdf</Filename>
+            </Form>
+            <Form name="InitialDisc_Non-CA">
+                <Filename>Interbank_DisclosurePkg_rev4b_(Non-CA).pdf</Filename>
+            </Form>
+            <Form name="SubmissionForm">
+                <Filename>Interbank_SubmissionForm_rev4b.pdf</Filename>
+            </Form>
+        </Forms>
+    </Lender>
+
+    <Lender name="Plaza">
+        <Forms>
+            <Form name="Anti-Steering">
+                <Filename>Plaza_Anti-Steering.pdf</Filename>
+            </Form>
+            <Form name="SSA89">
+                <Filename>Plaza_SSA89_rev1.pdf</Filename>
+            </Form>
+        </Forms>
+    </Lender>
+
+    <Lender name="PRMG">
+        <Forms>
+            <Form name="FHACaseNumReq">
+                <Filename>PRMG_FHACaseNumReq.pdf</Filename>
+            </Form>
+            <Form name="InitialDisc">
+                <Filename>PRMG_InitialBundle_rev1.pdf</Filename>
+            </Form>
+            <Form name="SubmissionForm">
+                <Filename>PRMG_SubmissionForm.pdf</Filename>
+            </Form>
+        </Forms>
+    </Lender>
+</Lenders>
+</FormReference>
+

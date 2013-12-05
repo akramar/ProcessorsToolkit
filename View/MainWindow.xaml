@@ -1,68 +1,58 @@
 ﻿<Window x:Class="ProcessorsToolkit.View.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow"
-        Width="1000"
+        Title="Processor's Toolkit"
+        x:Name="PTKMainWindow"
+        xmlns:View="clr-namespace:ProcessorsToolkit.View" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
         xmlns:ViewModel="clr-namespace:ProcessorsToolkit.ViewModel"
-        xmlns:View="clr-namespace:ProcessorsToolkit.View"
-        MinWidth="300"
-        WindowStartupLocation="CenterScreen" >
+        d:DataContext="{d:DesignInstance ViewModel:MainWindowVM}"
+        MinWidth="1025"
+        WindowStartupLocation="CenterScreen">
 
     <Window.DataContext>
         <ViewModel:MainWindowVM/>
     </Window.DataContext>
 
+    <Window.InputBindings>
+
+       <!-- <KeyBinding Key="F10" Command="{Binding ElementName=PTKMainWindow, Path=DataContext.TestCommand}" />
+        <KeyBinding Key="F" Modifiers="Control" Command="{Binding ElementName=PTKMainWindow, Path=DataContext.TestCommand}" /> -->
+        <KeyBinding Key="F" Modifiers="Control" Command="Find" />
+
+    </Window.InputBindings>
+    
+    <Window.CommandBindings>
+            <CommandBinding Command="Find" Executed="FindExecuted" />
+        
+    </Window.CommandBindings>
+
+    <!--
+    <Window.InputBindings>
+        <KeyBinding Key="F" Modifiers="Control" Command="{Binding FindBorrNameCommand}" />
+        <KeyBinding Key="F1" Command="FindDirCommand"></KeyBinding>
+    </Window.InputBindings>
+    -->
+    
+    <!--
+    <Window.CommandBindings>        
+        <CommandBinding Command="{Binding FindCommand}" Executed="MyCommandExecuted"/>
+    </Window.CommandBindings>
+    -->
+    <!--
+    <Window.Resources>
+
+    </Window.Resources>
+    -->
+    
+
     <Grid>
-        <Menu IsMainMenu="True" Margin="0,0,0,0" Height="25" VerticalAlignment="Top" >
-            <MenuItem Header="_File" />
+        <View:MainMenuUC />
 
-            <MenuItem Header="_Forms" >
-                <MenuItem Header="_Interbank Wholesale Mortgage">
-                    <MenuItem Header="_Initial Disclosures" Click="FormsMenu_Click" CommandParameter="IBW_Initial"></MenuItem>
-                    <MenuItem Header="_Submission Form" Click="FormsMenu_Click" CommandParameter="IBW_Submission"></MenuItem>
-                    <MenuItem Header="_Open Interbank Site (external)" Click="FormsMenu_Click" CommandParameter="IBW_FormSite"></MenuItem>
-                </MenuItem>
-                <MenuItem Header="_Paramount Residential Mortgage">
-                    <MenuItem Header="_Initial Disclosures" Click="FormsMenu_Click" CommandParameter="PRMG_Initial" ></MenuItem>
-                    <MenuItem Header="_Submission Form" Click="FormsMenu_Click" CommandParameter="PRMG_Submission"></MenuItem>
-                    <MenuItem Header="_FHA Case Number Request" IsEnabled="False"></MenuItem>
-                </MenuItem>
-                <MenuItem Header="_Plaza Home Mortgage">
-                    <MenuItem Header="_Anti-Steering / Loan Options" Click="FormsMenu_Click" CommandParameter="PHM_Anti-Steering"></MenuItem>
-                    <MenuItem Header="_SSA-89 forms" Click="FormsMenu_Click" CommandParameter="PHM_SSA-89"></MenuItem>
-                </MenuItem>
-            </MenuItem>
+        <View:BorrFoldersUC Grid.Row="0" Grid.ColumnSpan="1" Grid.Column="0" Margin="10,26,0,0" HorizontalAlignment="Left" />
+        
+        <View:BorrInfoUC Grid.Row="0" Grid.ColumnSpan="1" Margin="258,34,10,0" VerticalAlignment="Top" />
 
-            <MenuItem Header="_Tools" >
-                <MenuItem Header="_Upload To...">
-                    <MenuItem Header="Interbank Wholeale Mortgage" Click="UploadTo_Click" CommandParameter="IBW"></MenuItem>
-                    <MenuItem Header="Paramount Residential Mortgage" Click="UploadTo_Click" CommandParameter="PRMG"></MenuItem>
-                </MenuItem>
-                <Separator></Separator>
-                <MenuItem Header="_Create New Conditions List"></MenuItem>
-                <MenuItem Header="_List All Conditions"></MenuItem>
-                <Separator></Separator>
-                <MenuItem Header="_Unlock Selected PDF"></MenuItem>
-                <MenuItem Header="_Flatten Selected PDF"></MenuItem>
-                <MenuItem Header="_List All PDFs"></MenuItem>
-            </MenuItem>
-            <MenuItem Header="_View" />
-            <MenuItem Header="_Window" />
-            <MenuItem Header="_Help" />
-        </Menu>
-
-        <View:BorrInfoUC Grid.Row="0" Grid.ColumnSpan="1" Margin="248,34,10,0" VerticalAlignment="Top" Loaded="BorrInfoUC_Loaded" />
-
-        <View:BorrFoldersUC Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Loaded="BorrFoldersUC_Loaded" VerticalAlignment="Bottom" Width="240" HorizontalAlignment="Left" Margin="0,26,0,0" />
-
-
-        <!--
-        <View:ButtonToolbar Grid.Row="0" Grid.ColumnSpan="1" Margin="208,95,66,627" />
- -->
-        <View:BorrFilesUC Grid.Row="0"  Grid.ColumnSpan="1" Loaded="FrameworkElement_OnLoaded" Margin="248,154,10,10" />
-
-
+        <View:BorrFilesUC Grid.Row="0" Grid.ColumnSpan="1" Margin="258,154,10,10" />
     </Grid>
-
-
 </Window>

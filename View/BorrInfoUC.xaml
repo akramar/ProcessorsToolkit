@@ -3,11 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ViewModel="clr-namespace:ProcessorsToolkit.ViewModel"
+             d:DataContext="{d:DesignInstance ViewModel:BorrInfoUCVM}"
              mc:Ignorable="d" >
     <Grid Margin="0">
-
         <StackPanel Name="MainInfoSP" >
-
             <StackPanel.Resources>
                 <Style x:Key="InnerSp" TargetType="{x:Type StackPanel}" >
                     <Setter Property="Orientation" Value="Horizontal"></Setter>
@@ -18,51 +18,59 @@
                     <Setter Property="Margin" Value="6,3,3,0"></Setter>
                     <Setter Property="HorizontalAlignment" Value="Right"></Setter>
                 </Style>
+                <Style TargetType="{x:Type TextBox}" >
+                    <Setter Property="IsReadOnly" Value="True" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding BorrData}" Value="{x:Null}">
+                            <Setter Property="IsEnabled" Value="False" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding BorrData.HasFannieData}" Value="False">
+                            <Setter Property="IsEnabled" Value="False" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding BorrData.HasFannieData}" Value="True">
+                            <Setter Property="IsEnabled" Value="True" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
             </StackPanel.Resources>
             
             <StackPanel Style="{StaticResource InnerSp}">
                 <TextBlock Width="76"> Borrower: </TextBlock>
-                <TextBox Width="200" IsReadOnly="True" Text="{Binding Path=BorrName_Combined, Mode=OneWay}" />
+                <TextBox Width="200"  Text="{Binding BorrData.BorrName_Combined, Mode=OneWay}" />
                 <TextBlock> SSN: </TextBlock>
-                <TextBox Width="80" IsReadOnly="True" Text="{Binding Path=BorrSSN_Pretty, Mode=OneWay}" />
+                <TextBox Width="80" Text="{Binding Path=BorrData.BorrSSN_Pretty, Mode=OneWay}" />
                 <TextBlock> DOB: </TextBlock>
-                <TextBox Width="70" IsReadOnly="True" Text="{Binding Path=BorrDOB_Pretty, Mode=OneWay}" />
+                <TextBox Width="70" Text="{Binding Path=BorrData.BorrDOB_Pretty, Mode=OneWay}" />
                 <TextBlock> Email: </TextBlock>
-                <TextBox Width="170" IsReadOnly="True" Text="{Binding Path=BorrEmail, Mode=OneWay}" />
+                <TextBox Width="170" Text="{Binding Path=BorrData.BorrEmail, Mode=OneWay}" />
             </StackPanel>
 
             <StackPanel Style="{StaticResource InnerSp}">
                 <TextBlock Width="76"> Co-Borrower:</TextBlock>
-                <TextBox Width="200" IsReadOnly="True" Text="{Binding Path=CoBorrName_Combined, Mode=OneWay}" />
+                <TextBox Width="200" Text="{Binding Path=BorrData.CoBorrName_Combined, Mode=OneWay}" />
                 <TextBlock> SSN:</TextBlock>
-                <TextBox Width="80" IsReadOnly="True" Text="{Binding Path=CoBorrSSN_Pretty, Mode=OneWay}" />
+                <TextBox Width="80" Text="{Binding Path=BorrData.CoBorrSSN_Pretty, Mode=OneWay}" />
                 <TextBlock> DOB:</TextBlock>
-                <TextBox Width="70" IsReadOnly="True" Text="{Binding Path=CoBorrDOB_Pretty, Mode=OneWay}" />
+                <TextBox Width="70" Text="{Binding BorrData.CoBorrDOB_Pretty, Mode=OneWay}" />
                 <TextBlock> Email:</TextBlock>
-                <TextBox Width="170" IsReadOnly="True" Text="{Binding Path=CoBorrEmail, Mode=OneWay}" />
+                <TextBox Width="170" Text="{Binding Path=BorrData.CoBorrEmail, Mode=OneWay}" />
             </StackPanel>
+            
             <StackPanel Style="{StaticResource InnerSp}">
-                <TextBlock Width="76"> Address:</TextBlock>
-                <TextBox Width="419" IsReadOnly="True" Text="{Binding Path=SubjAddr_Combined, Mode=OneWay}" />
-
+                <TextBlock Width="76"> Subject:</TextBlock>
+                <TextBox Width="419" Text="{Binding Path=BorrData.SubjAddr_Combined, Mode=OneWay}" />
                 <TextBlock> Occupancy:</TextBlock>
-                <TextBox Width="140" IsReadOnly="True" Text="{Binding Path=Occupancy, Mode=OneWay}" />
+                <TextBox Width="140" Text="{Binding Path=BorrData.Occupancy, Mode=OneWay}" />
             </StackPanel>
+            
             <StackPanel Style="{StaticResource InnerSp}">
                 <TextBlock Width="76"> Purpose:</TextBlock>
-                <TextBox Width="100" IsReadOnly="True" Text="{Binding Path=LoanPurpose, Mode=OneWay}" />
+                <TextBox Width="100" Text="{Binding Path=BorrData.LoanPurpose, Mode=OneWay}" />
                 <TextBlock> LTV:</TextBlock>
-                <TextBox Width="100" IsReadOnly="True" Text="{Binding Path=LTV_Pretty, Mode=OneWay}" />
+                <TextBox Width="100" Text="{Binding Path=BorrData.LTV_Pretty, Mode=OneWay}" />
                 <TextBlock> Gross Loan:</TextBlock>
-                <TextBox Width="100" IsReadOnly="True" Text="{Binding Path=LoanAmtGross, StringFormat=n, Mode=OneWay}" />
+                <TextBox Width="100" Text="{Binding Path=BorrData.LoanAmtGross, StringFormat=n, Mode=OneWay}" />
             </StackPanel>
-            
-            
         </StackPanel>
-        
-        
-
     </Grid>
-
-
 </UserControl>

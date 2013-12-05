@@ -1,0 +1,15 @@
+﻿<Window x:Class="ProcessorsToolkit.View.PRMGUploadWindow.UploadWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Upload Documents" Height="488" Width="669"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowInTaskbar="False" Closed="UploadWindow_OnClosed">
+
+    <Grid Margin="10,10,10,10">
+        <ContentControl x:Name="ContentArea" HorizontalAlignment="Stretch" ></ContentControl>
+        <!--<ContentControl x:Name="ContentArea2" Margin="0,100,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+        <ContentControl x:Name="ContentArea3" Margin="0,130,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+        
+        <Label x:Name="StatusLbl" VerticalAlignment="Bottom"  Margin="0,0,0,0" Height="40"/>-->
+    </Grid>
+    
+</Window>

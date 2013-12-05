@@ -10,8 +10,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using ProcessorsToolkit.Model;
-using ProcessorsToolkit.Model.Form;
-using ProcessorsToolkit.Model.Forms;
+using ProcessorsToolkit.Model.Interbank.FormFiller;
+using ProcessorsToolkit.Model.PRMG.FormFiller;
 using ProcessorsToolkit.View;
 
 //using ProcessorsToolkit.View;
@@ -20,24 +20,104 @@ namespace ProcessorsToolkit.ViewModel
 {
     public class MainWindowVM : ObservableObject
     {
+        //public static event EventHandler<SelectedBorrChangedEventArgs> SelectedBorrChanged;
+        //public static event EventHandler<SelectedDirChangedEventArgs> SelectedDirPathChanged;
+        //public static event EventHandler<SelectedBorrDataChangedEventArgs> SelectedBorrDataChanged;
+        public static event EventHandler ClearSelectedBorr;
 
-        public static BorrDir SelectedBorrDir { get; set; }
+        public static BorrDir SelectedBorrDir { get; set; } // THIS NEEDS TO BE CONSOLIDATED WITH BorrFoldersUCVM
         //public static string SelectedFolderPath { get; set; }
-        public static FannieData SelectedBorrData { get; set; }
+        //public static FannieData SelectedBorrData { get; set; }
+        //public static FileBase SelectedFile { get; set; } //This should be in BorrFilesVM (looser coupling)
+        //public static MainMenuUCVM MainMenu { get; set; }
+
+        //public static Menu MainMenuObj { get; set; }
 
 
-        public static event EventHandler<SelectedBorrChangedEventArgs> SelectedBorrChanged;
-        public static event EventHandler<SelectedDirChangedEventArgs> SelectedPathChanged;
-        public static event EventHandler<SelectedBorrDataChangedEventArgs> SelectedBorrDataChanged;
+        
 
+        public static MainWindow View { get; set; }
+        public static BorrFoldersUC BorrFoldersCtrl;
+        public static MainMenuUC MainMenuCtrl;
+        public static BorrInfoUC BorrInfoCtrl;
+        public static BorrFilesUC BorrFilesCtrl;
 
-        public static void OnSelectedBorrChanged(SelectedBorrChangedEventArgs e)
+        public MainWindowVM()
         {
-            SelectedBorrDir = e.CurrBorr;
+            //BorrInfoUCVM.BorrInfoUpdated += (sender, args) => OnSelectedBorrDataChanged(args);
+            ClearSelectedBorr += MainWindowVM_ClearSelectedBorr;
+            //SelectedFileChanged += MainWindowVM_SelectedFileChanged;
+
+            //TestCommand = FindCommand;
+
+
+        }
+        /*
+        public static RoutedCommand FindCommand = new RoutedCommand();
+
+        private void ExecutedFindCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            MessageBox.Show("Custom Command Executed");
+        }
+        private void CanExecuteCustomCommand(object sender, CanExecuteRoutedEventArgs e)
+        {
+            var target = e.Source as Control;
+
+            if (target != null)
+            {
+                e.CanExecute = true;
+            }
+            else
+            {
+                e.CanExecute = false;
+            }
+        }
+
+
+        public void MyCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+
+        }
+
+
+        public ICommand TestCommand { get; private set; }
+        */
+        /*
+        private static ICommand _findBorrNameCommand;
+        public static ICommand FindBorrNameCommand
+        {
+            get
+            {
+
+                if (_findBorrNameCommand == null)
+                {
+
+                    //_findBorrNameCommand = new RelayCommand(param => this.CloseCurrentCedarFile(param));
+                }
+                return _findBorrNameCommand;
+            }
+        }*/
+
+        /*
+        public static void OnSelectedFileChanged(SelectedFileChangedEventArgs e)
+        {
+            var handler = SelectedFileChanged;
+            if (e != null)
+                SelectedFile = e.CurrFile;
+            if (handler != null) handler(null, e);
+        }
+        */
+        
+        
+        /*public static void OnSelectedBorrChanged(SelectedBorrChangedEventArgs e)
+        {
+            if (e != null && e.CurrBorr != null)
+                SelectedBorrDir = e.CurrBorr;
             var handler = SelectedBorrChanged;
             if (handler != null) handler(null, e);
         }
-
+        */
+        /*
         public static void OnSelectedPathChanged(SelectedDirChangedEventArgs e)
         {
             //var subDir = BorrDir.GetSubDir(SelectedBorrDir.BorrName, e.CurrPath);
@@ -46,96 +126,49 @@ namespace ProcessorsToolkit.ViewModel
            //     SelectedBorrDir.SubDirs.First(sd => sd.FolderName == subDir).IsOpen = true;
 
             //SelectedFolderPath = e.CurrPath;
-            e.CurrPath = SelectedBorrDir.FullActivePath;
+            if (e != null && e.CurrPath != null)
+                e.CurrPath = SelectedBorrDir.FullActivePath;
 
-            var handler = SelectedPathChanged;
+            var handler = SelectedDirPathChanged;
             if (handler != null) handler(null, e);
         }
-
+        */
+        /*
         public static void OnSelectedBorrDataChanged(SelectedBorrDataChangedEventArgs e)
         {
-            SelectedBorrData = e.CurrData;
+            if (e != null)
+                SelectedBorrData = e.CurrData;
             var handler = SelectedBorrDataChanged;
             if (handler != null) handler(null, e);
         }
-
-        public MainWindowVM()
+        */
+        public static void OnClearBorrSelected()
         {
-            //BorrInfoUCVM.BorrInfoUpdated += (sender, args) => OnSelectedBorrDataChanged(args);
+            var handler = ClearSelectedBorr;
+            if (handler != null) handler(null, EventArgs.Empty);
         }
 
-        private enum FormClickActions { FillForm, OpenBrowser }
-
-        public static void FormMenuClick(string selectedFormCommand)
+        
+        void MainWindowVM_ClearSelectedBorr(object sender, EventArgs e)
         {
-            PDFFormBase filledForm = null;
-            FormClickActions clickAction;
-            string urlToOpen = "";
+            var borrFoldersUCVM = BorrFoldersCtrl.DataContext as BorrFoldersUCVM;
+            if (borrFoldersUCVM == null)
+                return;
 
-            switch (selectedFormCommand)
-            {
-                case "IBW_Initial":
-                    object formType = SelectedBorrData.SubjAddrState == "CA"
-                                          ? InterbankForm.FormTypes.InitialDisclosuresCA
-                                          : InterbankForm.FormTypes.InitialDisclosuresNonCA;
-                    filledForm = new InterbankForm((InterbankForm.FormTypes) formType, SelectedBorrData, SelectedBorrDir);
-                    clickAction = FormClickActions.FillForm;
-                    break;
-                case "IBW_Submission":
-                    filledForm = new InterbankForm(InterbankForm.FormTypes.SubmissionForm, SelectedBorrData,
-                                                   SelectedBorrDir);
-                    clickAction = FormClickActions.FillForm;
-                    break;
-                case "IBW_FormSite":
-                    urlToOpen = "http://www.interbankwholesale.com/broker-forms/";
-                    clickAction = FormClickActions.OpenBrowser;
-                    break;
-                case "PRMG_Initial":
-                    filledForm = new PRMGForm(PRMGForm.FormTypes.InitialDisclosures, SelectedBorrData, SelectedBorrDir);
-                    clickAction = FormClickActions.FillForm;
-                    break;
-                case "PRMG_Submission":
-                    filledForm = new PRMGForm(PRMGForm.FormTypes.SubmissionForm, SelectedBorrData, SelectedBorrDir);
-                    clickAction = FormClickActions.FillForm;
-                    break;
-                case "PHM_Anti-Steering":
-                    filledForm = new PlazaForm(PlazaForm.FormTypes.AntiSteering, SelectedBorrData, SelectedBorrDir);
-                    clickAction = FormClickActions.FillForm;
-                    break;
-                case "PHM_SSA-89":
-                    filledForm = new PlazaForm(PlazaForm.FormTypes.SSA89s, SelectedBorrData, SelectedBorrDir);
-                    clickAction = FormClickActions.FillForm;
-                    break;
-                default:
-                    return;
-            }
+            SelectedBorrDir = null;
+            SelectedBorrDir = null;
+            borrFoldersUCVM.OnSelectedBorrChanged(null);
+            //OnSelectedBorrDataChanged( null);
+            //OnSelectedPathChanged(null);
 
-            if (clickAction == FormClickActions.FillForm && filledForm != null)
-            {
-                filledForm.Fill();
-                filledForm.OpenForm();
-            }
-            else if (clickAction == FormClickActions.OpenBrowser && urlToOpen != "")
-            {
-                System.Diagnostics.Process.Start(urlToOpen);
-            }
-        }
 
-        public static void UploadToLender(string lenderCode)
-        {
+            //BorrFoldersUCVM.OnSelectedPathChanged(new SelectedDirChangedEventArgs() {CurrPath = null});
             
-            switch (lenderCode)
-            {
-                case "IBW":
-                    break;
-                case "PRMG":
-                    break;
-                    
-            }
-
-
+            borrFoldersUCVM.OnSelectedPathChanged(new SelectedPathChangedEventArgs() {CurrPath = null});
         }
-       
+
+        
+
         /*
         public void LoadSubDirs(ListViewItem item)
         {

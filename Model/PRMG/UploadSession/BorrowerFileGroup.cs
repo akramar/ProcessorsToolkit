@@ -1,5 +1,4 @@
 ﻿using System;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -14,32 +13,25 @@ using System.Xml.Linq;
 using System.Xml;
 //using ImageFlowUploader;
 using ProcessorsToolkit.Model.PRMG.UploadSession;
-using ProcessorsToolkit.Model.UploadSession.PRMG;
 using ProcessorsToolkit.ViewModel;
-using ProcessorsToolkit.ViewModel.PRMGUploadWindow;
-
+using ProcessorsToolkit.ViewModel.PRMG;
 
 namespace ProcessorsToolkit.Model.PRMG.UploadSession
 {
     public class BorrowerFileGroup : ObservableCollection<FileToUpload>
         // System.Collections.Concurrent.BlockingCollection<FileToUpload> //  List<FileToUpload>
     {
-        //public delegate void FileListChanged(object s, EventArgs e);
         public event EventHandler FileListHasChanged;
-        //public delegate void ListCompleted(object s, EventArgs e);
         public event EventHandler FileListHasCompleted;
-        private List<Tuple<string, string>> _formVals;
-        //public string BorrName { get; set; }
-        //private UploadWindowVM _parentVM;
+        //private List<Tuple<string, string>> _formVals;
+        private readonly UploadWindowVM _parentVM;
 
-
-        public BorrowerFileGroup() //UploadWindowVM parentVM)
+        public BorrowerFileGroup(UploadWindowVM parentVM) //TODO: Passing the UploadWindowVM doesn't seem right here
         {
-            //_parentVM = parentVM;
+            _parentVM = parentVM;
 
-            //FileListHasChanged += UploadWindowVM.DoneUploadingSingleFile;
-            FileListHasChanged += (sender, args) => UploadWindowVM.OnDoneUploadingSingleFile();
-            FileListHasCompleted += (sender, args) => UploadWindowVM.OnDoneUploadingAllFiles();
+            FileListHasChanged += (sender, args) => _parentVM.OnDoneUploadingSingleFile();
+            FileListHasCompleted += (sender, args) => _parentVM.OnDoneUploadingAllFiles();
         }
 
         public BorrowerFileGroup LoadAllFiles()
@@ -70,9 +62,8 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
             //upTask.Start();
             //upTask.ContinueWith(UploadWindowVM.OnDoneUploadingFiles(),  TaskScheduler.FromCurrentSynchronizationContext())
 
-
             Task.Factory.StartNew(FileWorker)
-                .ContinueWith(task => UploadWindowVM.OnDoneUploadingAllFiles(),
+                .ContinueWith(task => _parentVM.OnDoneUploadingAllFiles(),
                               TaskScheduler.FromCurrentSynchronizationContext());
 
 
@@ -98,7 +89,7 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
         public void FileWorker()
         {
             foreach (
-                var file in UploadWindowVM.WorkingFileList.Where(
+                var file in _parentVM.WorkingFileList.Where(
                     f => f.UploadProgress == FileToUpload.FileUploadStages.Unstarted 
                     && f.IsSelected))
             {
@@ -110,18 +101,15 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
                 int uploadresponsecode =
                     SingleFileUpload.HttpUploadFile(
                         file.PathFull, "file", "application/pdf", GetFormValues_v2(file),
-                        UploadWindowVM.ImgFlowSessionKey,
-                        UploadWindowVM.ImgFlowContainerKey,
-                        UploadWindowVM.CurrImgFlowSession.SessionCookies);
+                        _parentVM.ImgFlowSessionKey,
+                        _parentVM.ImgFlowContainerKey,
+                        _parentVM.CurrImgFlowSession.SessionCookies);
 
-                if (uploadresponsecode == 1)
-                    file.UploadProgress = FileToUpload.FileUploadStages.Completed;
-                else
-                    file.UploadProgress = FileToUpload.FileUploadStages.Failed;
+                file.UploadProgress = uploadresponsecode == 1 ? 
+                    FileToUpload.FileUploadStages.Completed : FileToUpload.FileUploadStages.Failed;
 
                 if (listUpdatedEvent != null)
                     listUpdatedEvent(this, null);
-
             }
             var listCompletedEvent = FileListHasCompleted;
             if (listCompletedEvent != null)
@@ -129,7 +117,7 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
         }
 
         //Deprecated
-        public List<Tuple<string, string>> GetFormValues(HtmlAgilityPack.HtmlDocument sourceDoc)
+        private List<Tuple<string, string>> GetFormValues(HtmlAgilityPack.HtmlDocument sourceDoc)
         {
             //HtmlAgilityPack.HtmlNode uploadForm = entiredoc.GetElementbyId("xForm");
 
@@ -176,11 +164,7 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
             inputValsList.Add(new Tuple<string, string>("xDocTypeId", "209638"));
 
             //inputValues.Add("xProjectId", "1000");
-
-
-
             return inputValsList;
-
         }
 
         public List<Tuple<string, string>> GetFormValues_v2(FileToUpload sourceFile)
@@ -196,7 +180,7 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
                     new Tuple<string, string>("xProjectId", "1000"),
                     //new Tuple<string,string>("xContainerKey","214085"),
                     //new Tuple<string, string>("xContainerKey", sourceFile.MatchedLoan.ContId),
-                    new Tuple<string, string>("xContainerKey", UploadWindowVM.TargetLoanItem.ContId),
+                    new Tuple<string, string>("xContainerKey", _parentVM.TargetLoanItem.ContId),
                     new Tuple<string, string>("xWsSuccessMsg", "Document upload successful."),
                     new Tuple<string, string>("xWsNamespace", "XDOC.INBOX.FILEUPLOAD"),
                     new Tuple<string, string>("xWsPostDialog", "/xsuite/xapps/std/axStdWebservicePostDialog.aspx"),
@@ -207,23 +191,29 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
                     new Tuple<string, string>("xColor", "1"),
                     //new Tuple<string,string>("XCA29xContainerKey","214085"),
                     //new Tuple<string, string>("XCA29xContainerKey", sourceFile.MatchedLoan.ContId),
-                    new Tuple<string, string>("xContainerKey", UploadWindowVM.TargetLoanItem.ContId),
+                    new Tuple<string, string>("xContainerKey", _parentVM.TargetLoanItem.ContId),
                     new Tuple<string, string>("XCA29xContainerId", ""),
                     //new Tuple<string,string>("XCA29xContainerRef","3254506880"),
                     //new Tuple<string, string>("XCA29xContainerRef", sourceFile.MatchedLoan.PRMGLoanNum),
-                    new Tuple<string, string>("XCA29xContainerRef", UploadWindowVM.TargetLoanItem.PRMGLoanNum),
+                    new Tuple<string, string>("XCA29xContainerRef", _parentVM.TargetLoanItem.PRMGLoanNum),
                     //new Tuple<string,string>("xContAtt","3254506880"),
                     //new Tuple<string, string>("xContAtt", sourceFile.MatchedLoan.PRMGLoanNum),
-                    new Tuple<string, string>("xContAtt", UploadWindowVM.TargetLoanItem.PRMGLoanNum),
+                    new Tuple<string, string>("xContAtt", _parentVM.TargetLoanItem.PRMGLoanNum),
                     //new Tuple<string,string>("xContAtt","TODD JONES"),
                     //new Tuple<string, string>("xContAtt", sourceFile.MatchedLoan.BorrNameRaw),
-                    new Tuple<string, string>("xContAtt", UploadWindowVM.TargetLoanItem.BorrNameRaw),
+                    new Tuple<string, string>("xContAtt", _parentVM.TargetLoanItem.BorrNameRaw),
                     new Tuple<string, string>("XCA33_schemaIds", "209638"),
                     new Tuple<string, string>("XCA33_schemaIds", "209654"),
                     new Tuple<string, string>("XCA33_schemaIds", "209681"),
-                    new Tuple<string, string>("xDocTypeId", sourceFile.DocTypeId),
+                    //new Tuple<string, string>("xDocTypeId", sourceFile.DocTypeId), //TODO: be able to change condition type
+                    
                     new Tuple<string, string>("xFileName", sourceFile.NameWithExt)
                 };
+            var docTypeId = (_parentVM.SelectedUploadType == UploadWindowVM.UploadTypes.PTDConditions)
+                                ? FileToUpload.DocTypeId(sourceFile.ConditionId)
+                                : FileToUpload.DocTypeId("-1"); //-1 is our submission indicator
+
+            newFormVals.Add(new Tuple<string, string>("xDocTypeId", docTypeId));
             newFormVals.Add(new Tuple<string, string>("xWsPayload", PayloadEnvelope.CreateEnvelopeString(newFormVals)));
 
             newFormVals.ForEach(
@@ -241,11 +231,11 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
                 xContainerId="" xColor="" xFileName="C:\fakepath\Moyer - W2 2010.pdf" ></file>
                     </envelope>*/
 
-                XmlDocument doc = new XmlDocument();
-                XmlElement el = (XmlElement) doc.AppendChild(doc.CreateElement("envelope"));
+                var doc = new XmlDocument();
+                var el = (XmlElement) doc.AppendChild(doc.CreateElement("envelope"));
                 el.SetAttribute("xProjectId", formInputsList.First(t => t.Item1 == "xProjectId").Item2);
                     // "1000");// formInputs["xProjectId"]);
-                XmlElement envChild = (XmlElement) el.AppendChild(doc.CreateElement("file"));
+                var envChild = (XmlElement) el.AppendChild(doc.CreateElement("file"));
                 envChild.SetAttribute("xProjectId", formInputsList.First(t => t.Item1 == "xProjectId").Item2);
                     // "1000");// formInputs["xProjectId"]);
                 envChild.SetAttribute("xBatchId", ""); //formInputsList.First(t => t.Item1 == "xBatchId").Item2);

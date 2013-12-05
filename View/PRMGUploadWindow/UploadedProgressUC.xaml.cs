@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using ProcessorsToolkit.ViewModel.PRMGUploadWindow;
+using ProcessorsToolkit.ViewModel.PRMG;
 
 namespace ProcessorsToolkit.View.PRMGUploadWindow
 {
@@ -21,20 +21,21 @@ namespace ProcessorsToolkit.View.PRMGUploadWindow
     /// </summary>
     public partial class UploadedProgressUC : UserControl
     {
-        public UploadedProgressUC()
+        private readonly UploadWindowVM _parentVM;
+
+        public UploadedProgressUC(UploadWindowVM parentVM)
         {
+            _parentVM = parentVM;
+
             InitializeComponent();
 
-            UploadWindowVM.DoneUploadingSingleFile += UploadWindowVMOnDoneUploadingSingleFile;
-            UploadWindowVM.DoneUploadingAllFiles += UploadWindowVM_DoneUploadingAllFiles;
+            _parentVM.DoneUploadingSingleFile += UploadWindowVMOnDoneUploadingSingleFile;
+            _parentVM.DoneUploadingAllFiles += UploadWindowVM_DoneUploadingAllFiles;
         }
-
         
-        
-
-        private void FrameworkElement_OnLoaded(object sender, RoutedEventArgs e)
+        private void FilesListLB_OnLoaded(object sender, RoutedEventArgs e)
         {
-            FilesListLB.ItemsSource = UploadWindowVM.WorkingFileList.Where(f => f.IsSelected);
+            FilesListLB.ItemsSource = _parentVM.WorkingFileList.Where(f => f.IsSelected);
             
 
         }

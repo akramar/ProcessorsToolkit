@@ -20,30 +20,25 @@ namespace ProcessorsToolkit.View
     /// </summary>
     public partial class BorrInfoUC : UserControl
     {
-        
-
-        public BorrInfoUCVM CurrBorrInfoVM;
-
         public BorrInfoUC()
         {
-            CurrBorrInfoVM = new BorrInfoUCVM();
-            //CurrBorrInfoVM.BorrData.BorrNameFirst = "none";
+            MainWindowVM.BorrInfoCtrl = this;
+            DataContext = new BorrInfoUCVM {View = this};
 
             InitializeComponent();
 
-            MainInfoSP.DataContext = CurrBorrInfoVM.BorrData;
-
-            MainWindowVM.SelectedBorrDataChanged += BorrInfoVM_BorrInfoUpdated;
-
-
-
+            var borrInfoUCVM = DataContext as BorrInfoUCVM;
+            borrInfoUCVM.SelectedBorrDataChanged += BorrInfoVM_BorrInfoUpdated;
         }
-
+        
         void BorrInfoVM_BorrInfoUpdated(object sender, EventArgs e)
         {
-            MainInfoSP.DataContext = null;
-            MainInfoSP.DataContext = CurrBorrInfoVM.BorrData;
+            var borrInfoUCVM = DataContext as BorrInfoUCVM;
+            if (borrInfoUCVM == null)
+                return;
 
+            MainInfoSP.DataContext = null;
+            MainInfoSP.DataContext = borrInfoUCVM;
         }
     }
 }

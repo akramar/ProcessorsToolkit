@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ProcessorsToolkit.Model.UploadSession.PRMG
+namespace ProcessorsToolkit.Model.PRMG.UploadSession
 {
     public class PRMGSessionLoggedIn : EventArgs
     {

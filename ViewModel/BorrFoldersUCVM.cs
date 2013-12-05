@@ -13,40 +13,49 @@ namespace ProcessorsToolkit.ViewModel
 {
     public class BorrFoldersUCVM
     {
+        public ObservableCollection<BorrDir> BorrDirs { get; set; }
+        public BorrDir SelectedBorrDir { get { return BorrDirs.FirstOrDefault(ld => ld.IsCurrentBorr); } }
+        public BorrFoldersUC View { get; set; }
+
         public event EventHandler<SelectedBorrChangedEventArgs> SelectedBorrChanged;
-        public event EventHandler<SelectedDirChangedEventArgs> SelectedPathChanged;
+        public event EventHandler<SelectedPathChangedEventArgs> SelectedPathChanged;
+        public event EventHandler AvailableFoldersUpdated;
 
 
-        protected virtual void OnSelectedPathChanged(SelectedDirChangedEventArgs e)
+        public BorrFoldersUCVM()
+        {
+            BorrDirs = new ObservableCollection<BorrDir>();
+            //LoadBorrFolders();
+
+            AvailableFoldersUpdated += MainWindowVM_AvailableFoldersUpdated;
+
+            //SelectedPathChanged += (o, args) => OnSelectedPathChanged(args); // infinite loop!
+        }
+
+
+        public virtual void OnSelectedPathChanged(SelectedPathChangedEventArgs e)
         {
             var handler = SelectedPathChanged;
             if (handler != null) handler(this, e);
         }
 
-        protected virtual void OnSelectedBorrChanged(SelectedBorrChangedEventArgs e)
+        public virtual void OnSelectedBorrChanged(SelectedBorrChangedEventArgs e)
         {
+            if (e != null && e.CurrBorrDir != null)
+                MainWindowVM.SelectedBorrDir = e.CurrBorrDir;
+
             var handler = SelectedBorrChanged;
             if (handler != null) handler(this, e);
         }
 
 
-        public ObservableCollection<BorrDir> BorrDirs { get; set; }
-
-        public BorrDir SelectedBorr
+        void MainWindowVM_AvailableFoldersUpdated(object sender, EventArgs e)
         {
-            get { return BorrDirs.First(ld => ld.IsCurrentBorr); }
-        }
-
-        public BorrFoldersUCVM()
-        {
-
-
             BorrDirs = new ObservableCollection<BorrDir>();
-
             LoadBorrFolders();
-
+            View.RefreshFolderList();
         }
-
+        
         public void LoadBorrFolders()
         {
 
@@ -54,65 +63,73 @@ namespace ProcessorsToolkit.ViewModel
 
             //modal.Show();
 
-            var loanFolderSrc = @"C:\Users\Alain Kramar\Documents\Loans";
 
-            foreach (var borrFolder in Directory.GetDirectories(loanFolderSrc))
+            var availableDirs = Properties.Settings.Default.AvailableFolders;
+
+            foreach (var loanFolderSrc in availableDirs)
             {
-                DirectoryInfo dirInfo = new DirectoryInfo(borrFolder);
-                var borrName = dirInfo.Name;
+                foreach (var borrFolder in Directory.GetDirectories(loanFolderSrc))
+                {
+                    var dirInfo = new DirectoryInfo(borrFolder);
+                    var borrName = dirInfo.Name;
 
-                if (!borrName.StartsWith("_") && !borrName.StartsWith("."))
-                    BorrDirs.Add(new BorrDir(borrName, borrFolder));
+                    if (!borrName.StartsWith("_") && !borrName.StartsWith("."))
+                        BorrDirs.Add(new BorrDir(borrName, borrFolder));
 
+                }
             }
 
+            //TODO: sort
 
+            //
             //this.listView1.DataContext = entries;
 
         }
 
-        public void SetNewBorrDir(BorrDir borrDir)
+        public void SetNewBorrDir(BorrDir clickedBorrDir)
         {
-            foreach (var ld in BorrDirs.Where(t => t.IsCurrentBorr))
-                ld.IsCurrentBorr = false;
+            foreach (var dir in BorrDirs.Where(t => t.IsCurrentBorr))
+                dir.IsCurrentBorr = false;
 
-            foreach (var ld in BorrDirs.Where(t => t.SubDirs != null))
-                ld.SubDirs = null;
+            foreach (var dir in BorrDirs.Where(t => t.SubDirs != null))
+                dir.SubDirs = null;
 
+            BorrDirs.First(dir => dir == clickedBorrDir).IsCurrentBorr = true;
 
-            BorrDirs.First(ld => ld == borrDir).IsCurrentBorr = true;
+            BorrDirs.First(dir => dir == clickedBorrDir).LoadSubDirs(); //unnecessary comparing?
 
-            BorrDirs.First(ld => ld == borrDir).LoadSubDirs(); //unnecessary comparing?
-
-            OnSelectedBorrChanged(new SelectedBorrChangedEventArgs {CurrBorr = SelectedBorr});
-
+            OnSelectedBorrChanged(new SelectedBorrChangedEventArgs {CurrBorrDir = SelectedBorrDir});
             
-            OnSelectedPathChanged(new SelectedDirChangedEventArgs { CurrPath = SelectedBorr.FullRootPath });
-
+            OnSelectedPathChanged(new SelectedPathChangedEventArgs {CurrPath = SelectedBorrDir.FullRootPath});
         }
 
         public void SetNewBorrSubDir(BorrSubDir borrSubDir)
         {
-            foreach (var sd in SelectedBorr.SubDirs.Where(sd => sd.IsOpen))
+            foreach (var sd in SelectedBorrDir.SubDirs.Where(sd => sd.IsOpen))
                 sd.IsOpen = false;
 
-            SelectedBorr.SubDirs.First(sd => sd.FolderName == borrSubDir.FolderName).IsOpen = true;
-
-
-            //var subDir = BorrDir.GetSubDir(SelectedBorrDir.BorrName, e.CurrPath);
-
-            // if (!String.IsNullOrEmpty(subDir))
-            //     SelectedBorrDir.SubDirs.First(sd => sd.FolderName == subDir).IsOpen = true;
-
-            //SelectedFolderPath = e.CurrPath;
-            //e.CurrPath = SelectedBorrDir.FullActivePath;
-
+            SelectedBorrDir.SubDirs.First(sd => sd.FolderName == borrSubDir.FolderName).IsOpen = true;
+            
             System.Diagnostics.Debug.WriteLine("Actual path: " + borrSubDir.Fullpath);
-            System.Diagnostics.Debug.WriteLine("Calculated path: " + SelectedBorr.FullActivePath);
+            System.Diagnostics.Debug.WriteLine("Calculated path: " + SelectedBorrDir.FullActivePath);
 
-            OnSelectedPathChanged(new SelectedDirChangedEventArgs { CurrPath = SelectedBorr.FullActivePath });
+            OnSelectedPathChanged(new SelectedPathChangedEventArgs { CurrPath = SelectedBorrDir.FullActivePath });
         }
 
-        
+        public void OnAvailableFoldersUpdated()
+        {
+            var handler = AvailableFoldersUpdated;
+            if (handler != null)
+                handler(null, EventArgs.Empty);
+
+            var borrFoldersUCVM = MainWindowVM.BorrFoldersCtrl.DataContext as BorrFoldersUCVM;
+            if (borrFoldersUCVM == null)
+                return;
+
+            MainWindowVM.OnClearBorrSelected();
+            borrFoldersUCVM.OnSelectedBorrChanged(new SelectedBorrChangedEventArgs {CurrBorrDir = null});
+
+            borrFoldersUCVM.OnSelectedPathChanged(new SelectedPathChangedEventArgs {CurrPath = null});
+        }
     }
 }

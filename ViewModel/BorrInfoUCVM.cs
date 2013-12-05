@@ -5,52 +5,62 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using ProcessorsToolkit.Model;
+using ProcessorsToolkit.View;
 
 namespace ProcessorsToolkit.ViewModel
 {
     public class BorrInfoUCVM : ObservableObject
     {
-        protected BorrDir SelectedBorrDir { get; set; }
+        public event EventHandler<SelectedBorrDataChangedEventArgs> SelectedBorrDataChanged;
+
+        //protected BorrDir SelectedBorrDir { get; set; } //this is duplicate
+
         public FannieData BorrData { get; set; }
-
-        /*public static event EventHandler<SelectedBorrDataChangedEventArgs> BorrInfoUpdated;
-
-        private static void OnBorrInfoUpdated(SelectedBorrDataChangedEventArgs e)
-        {
-            var handler = BorrInfoUpdated;
-            if (handler != null) handler(null, e);
-        }
-        */
-
+        public BorrInfoUC View { get; set; }
+        
         public BorrInfoUCVM()
         {
             BorrData = new FannieData();
 
-            MainWindowVM.SelectedBorrChanged += (sender, args) =>
-                {
-                    SelectedBorrDir = args.CurrBorr;
-                    FindAndFillFannieModel();
-                };
+            var borrFoldersUCVM = MainWindowVM.BorrFoldersCtrl.DataContext as BorrFoldersUCVM;
+            if (borrFoldersUCVM == null)
+                return;
+            
+            borrFoldersUCVM.SelectedBorrChanged += (sender, args) => FindAndFillFannieModel();
         }
 
-        private void FindAndFillFannieModel()
+        public void OnSelectedBorrDataChanged(SelectedBorrDataChangedEventArgs e)
+        {
+            if (e != null)
+                BorrData = e.CurrData; //re-assigning this is kind of redudant, but want to make sure BorrData gets assigned 
+            var handler = SelectedBorrDataChanged;
+            if (handler != null) handler(null, e);
+        }
+
+        internal void FindAndFillFannieModel()
         {
             BorrData = new FannieData();
+            var eventArgs = new SelectedBorrDataChangedEventArgs();
 
-            var latestFNM = Directory.GetFiles(SelectedBorrDir.FullRootPath)
+            var borrFoldersUCVM = MainWindowVM.BorrFoldersCtrl.DataContext as BorrFoldersUCVM;
+            if (borrFoldersUCVM == null)
+                return;
+
+            if (borrFoldersUCVM.SelectedBorrDir != null)
+            {
+
+                var latestFannieFile = Directory.GetFiles(borrFoldersUCVM.SelectedBorrDir.FullRootPath)
                                          .Where(file => file.EndsWith(".fnm", true, CultureInfo.InvariantCulture))
                                          .Select(filePath => new FileInfo(filePath))
                                          .OrderByDescending(f => f.LastWriteTime).FirstOrDefault();
-            if (latestFNM != null)
-                BorrData.LoadFannieFile(latestFNM);
+                if (latestFannieFile != null)
+                    BorrData.LoadFannieFile(latestFannieFile);
 
-            var eventArgs = new SelectedBorrDataChangedEventArgs {CurrData = BorrData};
-
-           // OnBorrInfoUpdated(eventArgs);
-
-            MainWindowVM.OnSelectedBorrDataChanged(eventArgs);
+                eventArgs.CurrData = BorrData;
+            }
+            
+            OnSelectedBorrDataChanged(eventArgs);
         }
-
-
+        
     }
 }

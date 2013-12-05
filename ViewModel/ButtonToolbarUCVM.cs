@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ProcessorsToolkit.Model;
-using ProcessorsToolkit.Model.Forms;
+using ProcessorsToolkit.Model.PRMG.FormFiller;
 
 namespace ProcessorsToolkit.ViewModel
 {
@@ -15,7 +15,11 @@ namespace ProcessorsToolkit.ViewModel
 
         public ButtonToolbarUCVM()
         {
-            MainWindowVM.SelectedBorrChanged += (sender, args) =>
+            var borrFoldersUCVM = MainWindowVM.BorrFoldersCtrl.DataContext as BorrFoldersUCVM;
+            if (borrFoldersUCVM == null)
+                return;
+
+            borrFoldersUCVM.SelectedBorrChanged += (sender, args) =>
                 {
                     SelectedBorrDir = args.CurrBorr;
                 };

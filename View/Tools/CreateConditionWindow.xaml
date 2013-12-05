@@ -1,0 +1,25 @@
+﻿<Window x:Class="ProcessorsToolkit.View.Tools.CreateConditionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Create New Condition" Height="180" Width="589" 
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowInTaskbar="False" >
+    <Grid>
+
+        <Label Content="Number" HorizontalAlignment="Left" Margin="48,30,0,0" VerticalAlignment="Top"/>
+
+        <TextBox Name="CondNumTB" HorizontalAlignment="Left" Height="23" Margin="52,56,0,0" TextWrapping="Wrap" VerticalAlignment="Top" 
+                 Width="61" LostFocus="CondNumTB_OnLostFocus" PreviewTextInput="PreviewTextInput" GotKeyboardFocus="CondNumTB_OnGotKeyboardFocus"/>
+
+        <Label Content="-" HorizontalAlignment="Left" Margin="113,53,0,0" VerticalAlignment="Top" Width="16"/>
+
+        <Label HorizontalAlignment="Left" Margin="127,30,0,0" Content="Condition Text"  VerticalAlignment="Top"/>
+        <TextBox Name="CondTextTB" HorizontalAlignment="Left" Height="23" Margin="129,56,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="392" />
+        <Button Content="Save &amp; Create New" HorizontalAlignment="Left" Margin="318,100,0,0" VerticalAlignment="Top" Width="120" Click="SaveAndCreate_Click"/>
+        <Button Content="Close" HorizontalAlignment="Left" Margin="464,100,0,0" VerticalAlignment="Top" Width="75" Click="Close_Click"/>
+
+
+
+
+
+    </Grid>
+</Window>

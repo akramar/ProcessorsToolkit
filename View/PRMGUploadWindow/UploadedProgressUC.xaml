@@ -6,14 +6,11 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <ListBox Margin="10" Name="FilesListLB"  Loaded="FrameworkElement_OnLoaded" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <ListBox Margin="10" Name="FilesListLB" Loaded="FilesListLB_OnLoaded" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
 
             <ListBox.ItemTemplate>
                 <DataTemplate>
-
-                    <ListBoxItem Content="{Binding Path=NameWithExt}" Foreground="{Binding Path=ListBoxTextColor}" HorizontalAlignment="Stretch"  Height="16" >
-                    </ListBoxItem>
-
+                    <ListBoxItem Content="{Binding Path=NameWithExt}" Foreground="{Binding Path=ListBoxTextColor}" HorizontalAlignment="Stretch"  Height="16" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
 

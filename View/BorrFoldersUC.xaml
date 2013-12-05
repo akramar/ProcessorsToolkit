@@ -6,16 +6,44 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" 
              d:DesignWidth="300"
-             d:DataContext="{d:DesignInstance ViewModel:BorrFoldersVM}"
+             d:DataContext="{d:DesignInstance ViewModel:BorrFoldersUCVM}"
              xmlns:ViewModel="clr-namespace:ProcessorsToolkit.ViewModel" >
-    <Grid>
-        <ListView Margin="4,8,0,3" Name="ListView1" MinWidth="200" BorderBrush="Black" ItemsSource="{Binding Path=BorrDirs}"   >
-            
-            
+    
+    <Grid Margin="0,10" VerticalAlignment="Stretch">
+        <Grid VerticalAlignment="Top">
+            <TextBox Name="SearchFoldersTB" TextChanged="TextBoxBase_OnTextChanged" Margin="0,0,20,0">
+                <TextBox.Style>
+                    <Style TargetType="TextBox" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                        <Style.Resources>
+                            <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None">
+                                <VisualBrush.Visual>
+                                    <Label Content="Search" Foreground="LightGray" />
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Style.Resources>
+                        <Style.Triggers>
+                            <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                            </Trigger>
+                            <Trigger Property="Text" Value="{x:Null}">
+                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter Property="Background" Value="White" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
 
+            </TextBox>
+        </Grid>
+        <Grid VerticalAlignment="Top" HorizontalAlignment="Right">
+            <TextBlock Margin="0,0,0,0" FontSize="17" Width="15" Foreground="Blue" MouseLeftButtonDown="UIElement_OnMouseLeftButtonDown" 
+                       TextAlignment="Center" Text="X" Cursor="Hand" />
+        </Grid>
+        <Grid Margin="0,30,0,0">
+            <ListView Name="BorrFoldersLV" MinWidth="200" BorderBrush="Black" ItemsSource="{Binding Path=BorrDirs}" ScrollViewer.VerticalScrollBarVisibility="Visible"  >
             <ListView.View>
-                
-                
                 <GridView>
                     <GridViewColumn>
                         <GridViewColumn.CellTemplate>
@@ -24,7 +52,7 @@
                                     
                                     <StackPanel Orientation="Horizontal">
                                         <Image Source="{Binding FolderImgPath}" Width="35"></Image>
-                                    <TextBlock Text="{Binding BorrName}" Width="140"/>
+                                    <TextBlock Text="{Binding BorrDirName}" Width="140"/>
                                     </StackPanel>
                                     
                                     <StackPanel Orientation="Horizontal">
@@ -53,7 +81,7 @@
             </ListView.View>
             <ListView.ItemContainerStyle>
                 <Style>
-                    <EventSetter Event="ListViewItem.MouseDoubleClick" Handler="listViewItem_MouseDoubleClick"/>
+                        <EventSetter Event="ListViewItem.MouseDoubleClick" Handler="BorrFolder_MouseDoubleClick"/>
                 </Style>
             </ListView.ItemContainerStyle>
 
@@ -63,6 +91,7 @@
                 </Style>
             </ListView.Resources>
         </ListView>
+        </Grid>
     </Grid>
 </UserControl>
 

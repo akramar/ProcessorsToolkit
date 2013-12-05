@@ -1,0 +1,119 @@
+﻿<UserControl x:Class="ProcessorsToolkit.View.MainMenuUC"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="25" d:DesignWidth="300"
+             d:DataContext="{d:DesignInstance ViewModel:MainMenuUCVM}"
+             xmlns:ViewModel="clr-namespace:ProcessorsToolkit.ViewModel" >
+    
+    <UserControl.Resources>
+        <Style x:Key="ReqAFolderOpen" TargetType="{x:Type MenuItem}" >
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsAFolderOpen}" Value="{x:Null}">
+                    <Setter Property="IsEnabled" Value="False" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsAFolderOpen}" Value="False">
+                    <Setter Property="IsEnabled" Value="False" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsAFolderOpen}" Value="True">
+                    <Setter Property="IsEnabled" Value="True" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ReqCondFolderOpen" TargetType="{x:Type MenuItem}" >
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsConditionFolderOpen}" Value="{x:Null}">
+                    <Setter Property="IsEnabled" Value="False" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsConditionFolderOpen}" Value="False">
+                    <Setter Property="IsEnabled" Value="False" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsConditionFolderOpen}" Value="True">
+                    <Setter Property="IsEnabled" Value="True" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ReqPDFSelected" TargetType="{x:Type MenuItem}" >
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsPDFSelected}" Value="{x:Null}">
+                    <Setter Property="IsEnabled" Value="False" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsPDFSelected}" Value="False">
+                    <Setter Property="IsEnabled" Value="False" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsPDFSelected}" Value="True">
+                    <Setter Property="IsEnabled" Value="True" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ReqPDFableSelected" TargetType="{x:Type MenuItem}" >
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsPDFableFileSelected}" Value="{x:Null}">
+                    <Setter Property="IsEnabled" Value="False" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsPDFableFileSelected}" Value="False">
+                    <Setter Property="IsEnabled" Value="False" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsPDFableFileSelected}" Value="True">
+                    <Setter Property="IsEnabled" Value="True" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    
+    <Menu Name="MainMenuCtrl" IsMainMenu="True" Margin="0,0,0,0" Height="21" VerticalAlignment="Top" >
+        <MenuItem Header="_File" >
+            <MenuItem Header="_Settings" Click="FileMenu_Click" CommandParameter="Settings" />
+            <MenuItem Header="_Exit" Click="FileMenu_Click" CommandParameter="Exit" />
+        </MenuItem>
+
+        <MenuItem Header="_Forms" Style="{StaticResource ReqAFolderOpen}" >
+            <MenuItem Header="_Interbank Wholesale Mortgage">
+                <MenuItem Header="_Initial Disclosures" Click="FormsMenu_Click" CommandParameter="IBW_Initial"  />
+                <MenuItem Header="_Submission Form" Click="FormsMenu_Click" CommandParameter="IBW_Submission" />
+                <MenuItem Header="_Change In Circumstance cover letter" Click="FormsMenu_Click" CommandParameter="IBW_CIC" />
+                <MenuItem Header="_Open Interbank Site (external)" Click="FormsMenu_Click" CommandParameter="IBW_FormSite" />
+            </MenuItem>
+            <MenuItem Header="_Paramount Residential Mortgage">
+                <MenuItem Header="_Initial Disclosures" Click="FormsMenu_Click" CommandParameter="PRMG_Initial" />
+                <MenuItem Header="_Submission Form" Click="FormsMenu_Click" CommandParameter="PRMG_Submission" />
+                <MenuItem Header="_FHA Case Number Request" IsEnabled="False" />
+            </MenuItem>
+            <MenuItem Header="_Plaza Home Mortgage">
+                <MenuItem Header="_Anti-Steering / Loan Options" Click="FormsMenu_Click" CommandParameter="PHM_Anti-Steering" />
+                <MenuItem Header="_SSA-89 forms" Click="FormsMenu_Click" CommandParameter="PHM_SSA-89" />
+            </MenuItem>
+        </MenuItem>
+
+        <MenuItem Header="_Tools" Style="{StaticResource ReqAFolderOpen}" >
+            <MenuItem Header="_Upload To...">
+                <MenuItem Header="Interbank Wholeale Mortgage" Click="UploadTo_Click" CommandParameter="IBW" />
+                <MenuItem Header="Paramount Residential Mortgage" Click="UploadTo_Click" CommandParameter="PRMG" />
+                <MenuItem Header="Plaza Home Mortgage" Click="UploadTo_Click" CommandParameter="PHM" />
+            </MenuItem>
+            <Separator />
+            <MenuItem Header="_Add New Conditions" Click="Tools_Click" CommandParameter="NewConds" />
+            <MenuItem Header="_List All Conditions" Click="Tools_Click" CommandParameter="ListAllConds" Style="{StaticResource ReqCondFolderOpen}" />
+            <Separator />
+            <MenuItem Header="_List All Files" Click="Tools_Click" CommandParameter="ListAllFiles" />
+            <Separator />
+            <MenuItem Header="_Unlock Selected PDF" Click="Tools_Click" CommandParameter="UnlockPDF" Style="{StaticResource ReqPDFSelected}" />
+            <MenuItem Header="_Flatten Selected PDF" Click="Tools_Click" CommandParameter="FlattenPDF" Style="{StaticResource ReqPDFSelected}" />
+            <MenuItem Header="_Convert to PDF" Click="Tools_Click" CommandParameter="ConvertToPDF" Style="{StaticResource ReqPDFableSelected}" />
+        </MenuItem>
+        <MenuItem Header="_Help" >
+            <MenuItem Header="_Online Guide" IsEnabled="False"></MenuItem>
+            <Separator />
+            <MenuItem Header="_About" IsEnabled="False"></MenuItem>
+        </MenuItem>
+        <!--
+            <MenuItem Header="_View" />
+            <MenuItem Header="_Window" />
+            
+            -->
+
+    </Menu>
+</UserControl>

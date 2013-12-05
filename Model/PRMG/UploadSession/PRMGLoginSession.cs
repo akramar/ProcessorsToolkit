@@ -11,7 +11,6 @@ using System.IO;
 using System.Xml.Linq;
 using System.Xml;
 using System.Runtime.InteropServices;
-using ProcessorsToolkit.ViewModel.PRMGUploadWindow;
 
 namespace ProcessorsToolkit.Model.PRMG.UploadSession
 {
@@ -19,7 +18,7 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
     {
         //private HttpWebRequest sessionRequest;// = (HttpWebRequest)WebRequest.Create("");
         //private HttpWebResponse _sessionResponse;
-        private CookieCollection _sessionCookies;// = new CookieContainer();
+        private readonly CookieCollection _sessionCookies;// = new CookieContainer();
         //private UploadWindowVM _parentVM;
         public string Username { get; set; }
         public string Password { get; set; }
@@ -29,6 +28,7 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
         public string ApplyId { get; set; }
         public string CurrentUserId { get; set; }
         public bool IsCompleteConnection { get; set; }
+        public string ImgFlowSessionKey { get; set; }
         //public delegate void PRMGSessionLoggedIn(object s, EventArgs e);
         //public event PRMGSessionLoggedIn PRMGSessionHasLoggedIn;
 
@@ -55,7 +55,6 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
             Connection: Keep-Alive
             */
 
-            //TODO: we can make this faster, fetching homepage only gives us this cookie, nothing else:
             //Set-Cookie: sUrlExtCid=0; path=/; secure; HttpOnly
             // except maybe already? Cookie: ASP.NET_SessionId=rwrptpciq3gb23xom2b05oxh; sUrlExtCid=0
             //never mind, we still need to fetch a session cookie. Maybe skip parsing homepage?
@@ -106,7 +105,7 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
 
             if (!String.IsNullOrEmpty(responseObj.ResponseHtml))
             {
-                var responseHtmlDoc = new HtmlAgilityPack.HtmlDocument();
+                var responseHtmlDoc = new HtmlDocument();
                 responseHtmlDoc.LoadHtml(responseObj.ResponseHtml);
             }
 
@@ -283,7 +282,7 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
 
             if (!String.IsNullOrEmpty(responseObj.ResponseHtml) )
             {
-                var responseHtmlDoc = new HtmlAgilityPack.HtmlDocument();
+                var responseHtmlDoc = new HtmlDocument();
                 responseHtmlDoc.LoadHtml(responseObj.ResponseHtml);
 
                 var inputElements = responseHtmlDoc.DocumentNode.Descendants("input");
@@ -434,10 +433,10 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
             sessionRequest.GetRequestStream().Write(postDataBytes, 0, postDataBytes.Length);
 
 
-            /*using (var writer = new StreamWriter(sessionRequest.GetRequestStream(), Encoding.ASCII))
-            {
-                writer.Write(postData);
-            }*/
+            //using (var writer = new StreamWriter(sessionRequest.GetRequestStream(), Encoding.ASCII))
+           // {
+            //    writer.Write(postData);
+            //}
 
             string responseHtml = null;
             using (var sessionResponse = (HttpWebResponse) sessionRequest.GetResponse())
@@ -500,7 +499,7 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
             //return responseHtml;
         }
 
-        private static void ParseRedirectHeader(string locationHeader)
+        private void ParseRedirectHeader(string locationHeader)
         {
             //Used when catching redirect from PRMG to Imageflow
 
@@ -511,7 +510,7 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
             var sessionData = HttpUtility.ParseQueryString(redirectHeader.Query).Get("sessiondata");
             var containerKey = HttpUtility.ParseQueryString(redirectHeader.Query).Get("xContainerKey");
 
-            UploadWindowVM.ImgFlowSessionKey = sessionData;
+            ImgFlowSessionKey = sessionData;
         }
     }
 }

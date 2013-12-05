@@ -1,0 +1,28 @@
+﻿<Window x:Class="ProcessorsToolkit.View.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Settings" Height="280" Width="300"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+
+
+    <Grid HorizontalAlignment="Stretch">
+        <Label Content="Source Folders:" Height="23" HorizontalAlignment="Left" Margin="10,6,0,0" Name="SourceFoldersLbl" VerticalAlignment="Top" Width="91" />
+
+        <StackPanel Margin="11,35,11,0" Height="153" VerticalAlignment="Top">
+            <ListBox Name="SourceFoldersLB" ScrollViewer.VerticalScrollBarVisibility="Visible" Height="117" SelectionChanged="SourceFoldersLB_SelectionChanged" />
+            <DockPanel HorizontalAlignment="Center">
+                <Button Content="New" Height="23" HorizontalAlignment="Left" Margin="5"  Name="NewBtn" VerticalAlignment="Center" Width="60" Click="NewBtn_Click" />
+                <Button Content="Edit" Height="23" HorizontalAlignment="Left" Margin="5"  Name="EditBtn" VerticalAlignment="Center" Width="60" Click="EditBtn_Click" />
+                <Button Content="Delete" Height="23" HorizontalAlignment="Left" Margin="5"  Name="DeleteBtn" VerticalAlignment="Center" Width="60" Click="DeleteBtn_Click" />
+            </DockPanel>
+        </StackPanel>
+
+
+        <DockPanel Margin="0,202,0,0" HorizontalAlignment="Right" Width="176" Height="26" VerticalAlignment="Top">
+            <Button Content="OK" Height="23" Name="OkBtn" Width="75" IsDefault="True" Click="OkBtn_Click" />
+            <Button Content="Cancel" Height="23" Name="CancelBtn" Width="75" IsCancel="True" Click="CancelBtn_Click" />
+        </DockPanel>
+    </Grid>
+</Window>

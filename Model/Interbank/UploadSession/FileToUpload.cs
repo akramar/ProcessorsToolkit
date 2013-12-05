@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ProcessorsToolkit.ViewModel.InterbankUploadWindow;
 
 namespace ProcessorsToolkit.Model.Interbank.UploadSession
 {
-    public class FileToUpload
+    public class FileToUpload // : FileBase
     {
         public string Id { get; private set; }
         //@"C:\Users\Alain Kramar\Documents\Loans\Clark, Mike & Mary\Clark - Appraisal confirmation.pdf",
@@ -20,7 +19,8 @@ namespace ProcessorsToolkit.Model.Interbank.UploadSession
         //public string PRMGBorrName {get; set;}
         //public LoanSearchResultItem MatchedLoan { get; set; }
         //public string[] SchemaIds {get;set;}
-        public string DocTypeId { get; set; }
+        //public string DocTypeId { get; set; }
+        public LoanCondition AttachedLoanCondition { get; set; }
 
         public
             System.Windows.Media.Brush ListBoxTextColor
@@ -45,7 +45,7 @@ namespace ProcessorsToolkit.Model.Interbank.UploadSession
 
         public FileToUpload()
         {
-            this.Id = Guid.NewGuid().ToString();
+            this.Id = Guid.NewGuid().ToString("N");
             this.UploadProgress = FileUploadStages.Unstarted;
         }
 

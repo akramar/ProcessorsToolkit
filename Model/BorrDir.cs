@@ -9,29 +9,77 @@ using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using ProcessorsToolkit.ViewModel;
 
 namespace ProcessorsToolkit.Model
 {
     public class BorrDir
     {
-        public string BorrName { get; set; }
+        public string BorrDirName { get; set; }
         public string FullRootPath { get; set; }
         public bool IsCurrentBorr { get; set; }
-        public ObservableCollection<BorrSubDir> SubDirs { get; set; }
+        public ObservableCollection<BorrSubDir> SubDirs { get; set; } //Really need to move this to it's own class
+        public bool? ActiveSubOpen { get; set; } //TODO: use Any(subs => subs.open) and set this value so we're not looping when files listed
         public string FullActivePath { get
         {
             if (SubDirs.Any(sd => sd.IsOpen))
                 return FullRootPath + "\\" + SubDirs.First(sd => sd.IsOpen).FolderName;
 
-            else
-                return FullRootPath;
+            return FullRootPath;
         }}
+        public BorrSubDir ActiveSubDir { get
+        {
+            return SubDirs == null ? null : SubDirs.FirstOrDefault(sd => sd.IsOpen);
+        }
+        }
        
+        public bool ActiveSubDirIsConditions {get
+        {
+            return ActiveSubDir != null && ActiveSubDir.FolderName.StartsWith("conditions");
+        }}
+
+        public bool ActiveSubDirIsConditions2 { get 
+        {
+                return new DirectoryInfo(FullActivePath).Name.StartsWith("conditions");
+            }
+        }
+        public bool ActiveSubDirIsConditions3 { get; set; }
 
         public BorrDir(string borrName, string fullPath)
         {
-            BorrName = borrName;
+            BorrDirName = borrName;
             FullRootPath = fullPath;
+
+
+
+
+            //SubDirs = new ObservableCollection<BorrSubDir>();
+
+           // BorrFoldersUCVM.SelectedPathChanged += (sender, args) => {
+            //        ActiveSubDirIsConditions3 = (ActiveSubDir != null && ActiveSubDir.FolderName.StartsWith("conditions"));
+             //   };
+
+            
+            var borrFoldersUCVM = MainWindowVM.BorrFoldersCtrl.DataContext as BorrFoldersUCVM;
+            if (borrFoldersUCVM == null)
+                return;
+
+
+            /*
+            borrFoldersUCVM.SelectedPathChanged += (sender, args) =>
+                {
+                    if (!IsCurrentBorr) //THIS IS BEING LOOPED OVER AND OVER AGAIN FOR EACH BORR DIR
+                       return;
+
+                    ActiveSubDirIsConditions3 = false;
+
+                    if (ActiveSubDir == null)
+                        ActiveSubDirIsConditions3 = false;
+
+                    else if (ActiveSubDir.FolderName.StartsWith("conditions"))
+                        ActiveSubDirIsConditions3 = true;
+                };
+            */
         }
 
         // dir watcher

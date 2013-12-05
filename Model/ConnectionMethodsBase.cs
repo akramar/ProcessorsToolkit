@@ -5,16 +5,14 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Web;
+using System.IO.Compression;
 
 namespace ProcessorsToolkit.Model
 {
     internal class ConnectionMethodsBase
     {
-        //private CookieCollection _sessionCookies;// = new CookieContainer();
+        //improve using http://stackoverflow.com/questions/7124797/httprequest-and-post
 
-        //public string Username { get; set; }
-        //public string Password { get; set; }
-        //public bool IsCompleteConnection { get; set; }
 
         public class GetResponse
         {
@@ -24,7 +22,6 @@ namespace ProcessorsToolkit.Model
             public string RedirectHeaderVal { get; set; }
         }
 
-        //private string PRMGGet(string targetUrl, string referer = "")
         protected static GetResponse Get(string targetUrl, string host, CookieCollection cookies, string referer = "")
         {
             /*
@@ -46,7 +43,7 @@ namespace ProcessorsToolkit.Model
             str = new StreamReader(webResponse.GetResponseStream());
             }
             */
-            //TODO: stick in using()
+
             var sessionRequest = (HttpWebRequest) WebRequest.Create(targetUrl);
             //_sessionRequest.Proxy = null; //Skipping search for proxy saves a lot of time but maybe less durable
             sessionRequest.AllowAutoRedirect = false;
@@ -55,13 +52,12 @@ namespace ProcessorsToolkit.Model
             if (referer != String.Empty)
                 sessionRequest.Referer = referer;
             sessionRequest.UserAgent = "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)";
-            sessionRequest.Host = host; //"www.prmglending.net";
+            sessionRequest.Host = host; //host header, like: www.prmglending.net
             sessionRequest.KeepAlive = true;
             sessionRequest.CookieContainer = new CookieContainer();
             sessionRequest.CookieContainer.Add(cookies);
             sessionRequest.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
 
-            //string responseHtml = null;
             var responseObj = new GetResponse();
 
             using (var sessionResponse = (HttpWebResponse) sessionRequest.GetResponse())
@@ -78,10 +74,7 @@ namespace ProcessorsToolkit.Model
                     var responseStream = sessionResponse.GetResponseStream();
                     if (responseStream != null)
                         responseObj.ResponseHtml = new StreamReader(responseStream).ReadToEnd();
-
-                    //if (responseHtml != null)
-                    //   _sessionCookies.Add(sessionResponse.Cookies);
-
+                    
                 }
                 catch (Exception ex)
                 {
@@ -102,9 +95,7 @@ namespace ProcessorsToolkit.Model
         {
             var sessionRequest = (HttpWebRequest) WebRequest.Create(targetUrl);
 
-
-            //sessionRequest = (HttpWebRequest)WebRequest.Create(targetUrl);
-            //_sessionRequest.Proxy = null;
+            sessionRequest.Proxy = null;
             sessionRequest.AllowAutoRedirect = false;
             sessionRequest.Method = "POST";
             sessionRequest.Accept = "text/html, application/xhtml+xml, */*";
@@ -113,22 +104,22 @@ namespace ProcessorsToolkit.Model
             sessionRequest.ContentType = "application/x-www-form-urlencoded";
             sessionRequest.Host = host; // "www.prmglending.net";
             sessionRequest.KeepAlive = true;
+            //sessionRequest.Credentials = CredentialCache.DefaultCredentials;
             sessionRequest.CookieContainer = new CookieContainer();
             sessionRequest.CookieContainer.Add(cookies);
 
-            var enconding = new ASCIIEncoding();
-            var postDataBytes = enconding.GetBytes(postData);
-            sessionRequest.ContentLength = postDataBytes.Length;
+            //var enconding = new ASCIIEncoding();
+            //var postDataBytes = enconding.GetBytes(postData);
+            //sessionRequest.ContentLength = postDataBytes.Length;
+            //sessionRequest.GetRequestStream().Write(postDataBytes, 0, postDataBytes.Length);
 
-            sessionRequest.GetRequestStream().Write(postDataBytes, 0, postDataBytes.Length);
+            //http://stackoverflow.com/questions/7124797/httprequest-and-post
 
-            //Refer to the other class we use for posting? Imageflow connector?
-            /*using (var writer = new StreamWriter(sessionRequest.GetRequestStream(), Encoding.ASCII))
+            using (var writer = new StreamWriter(sessionRequest.GetRequestStream(), Encoding.ASCII))
             {
                 writer.Write(postData);
-            }*/
+            }
 
-            //string responseHtml = null;
             var responseObj = new PostResponse();
 
             using (var sessionResponse = (HttpWebResponse) sessionRequest.GetResponse())
@@ -163,7 +154,7 @@ namespace ProcessorsToolkit.Model
         {
             var sessionRequest = (HttpWebRequest) WebRequest.Create(targetUrl);
 
-            //_sessionRequest.Proxy = null;
+            sessionRequest.Proxy = null;
             sessionRequest.AllowAutoRedirect = false;
             sessionRequest.Method = "HEAD";
             sessionRequest.Accept = "text/html, application/xhtml+xml, */*";
@@ -189,8 +180,6 @@ namespace ProcessorsToolkit.Model
                     if (sessionResponse.Cookies != null && sessionResponse.Cookies.Count != 0)
                         responseObj.ResponseCookies.Add(sessionResponse.Cookies);
 
-                    // if (sessionResponse.Cookies != null)
-                    //    _sessionCookies.Add(sessionResponse.Cookies);
                 }
                 catch (Exception ex)
                 {

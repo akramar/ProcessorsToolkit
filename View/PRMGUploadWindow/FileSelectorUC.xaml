@@ -24,7 +24,7 @@
             </ListView.ItemTemplate>
 
         </ListView>
-            <Button Width="60" Height="23" Content="Continue" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="ButtonBase_OnClick" Margin="0,0,30,10"/>
+            <Button Width="60" Height="23" Content="Upload" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="ButtonBase_OnClick" Margin="0,0,30,10"/>
      
     </Grid>
 </UserControl>

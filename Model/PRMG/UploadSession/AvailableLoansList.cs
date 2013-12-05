@@ -12,17 +12,17 @@ using System.Windows;
 using System.Xml.Linq;
 using System.Xml;
 using ProcessorsToolkit.ViewModel;
-using ProcessorsToolkit.ViewModel.PRMGUploadWindow;
 
 namespace ProcessorsToolkit.Model.PRMG.UploadSession
 {
     public class AvailableLoansList : ObservableCollection<LoanSearchResultItem>
     {
         //private readonly UploadWindowVM _parentVM;
+        private readonly ImageFlowSession _imageFlowSession;
 
-        public AvailableLoansList()//UploadWindowVM parentVM)
+        public AvailableLoansList(ImageFlowSession imageFlowSession)//UploadWindowVM parentVM)
         {
-            //_parentVM = parentVM;
+            _imageFlowSession = imageFlowSession;
         }
 
         
@@ -71,9 +71,9 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
                 return;
             */
 
-            var responseObj = ConnectionMethods.ImgFlowPost(searchUrl, UploadWindowVM.CurrImgFlowSession.SessionCookies,
+            var responseObj = ConnectionMethods.ImgFlowPost(searchUrl, _imageFlowSession.SessionCookies,
                                                          postData);
-            UploadWindowVM.CurrImgFlowSession.SessionCookies.Add(responseObj.ResponseCookies);         
+            _imageFlowSession.SessionCookies.Add(responseObj.ResponseCookies);         
        
             var searchResponseHtml = new HtmlAgilityPack.HtmlDocument();
             searchResponseHtml.LoadHtml(responseObj.ResponseHtml);
@@ -122,8 +122,9 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
                                 newLoanItem.PRMGLoanNum = cells[1].InnerText;
                                 newLoanItem.LoanAmt = cells[2].InnerText.Replace("$","").Replace("&nbsp;","");
 
+                                //This is where we're checking if the current loan being added mached MainWindow's selected borr 
                                 if (!foundMatchingloan &&
-                                    MainWindowVM.SelectedBorrDir.BorrName.StartsWith(newLoanItem.BorrLastName,
+                                    MainWindowVM.SelectedBorrDir.BorrDirName.StartsWith(newLoanItem.BorrLastName,
                                                                                      StringComparison
                                                                                          .InvariantCultureIgnoreCase))
                                 {

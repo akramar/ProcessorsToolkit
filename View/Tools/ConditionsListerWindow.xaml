@@ -1,0 +1,18 @@
+﻿<Window x:Class="ProcessorsToolkit.View.Tools.ConditionsListerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ConditionsListerWindow" Height="400" Width="520"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowInTaskbar="False">
+    <Grid>
+        <TextBox Name="FilesListBox" Margin="10,10,10,48" HorizontalAlignment="Stretch" TextWrapping="Wrap" 
+                 VerticalScrollBarVisibility="Auto" AcceptsReturn="True"/>
+        
+        <CheckBox Name="CondsOnlyCB" Content="Condition Files Only" IsChecked="True" Click="ConditionsOnly_CheckClicked" 
+                  HorizontalAlignment="Left" Margin="45,0,0,10" VerticalAlignment="Bottom"/>
+        
+        <CheckBox Name="NoExtCB" Content="Remove File Extension" HorizontalAlignment="Left" Margin="215,0,0,10" 
+                  Click="NoExtension_CheckClicked" VerticalAlignment="Bottom" IsChecked="True"/>
+        
+        <Button Width="60" Height="23" Content="Close" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="ButtonBase_OnClick" Margin="0,0,30,10"/>
+    </Grid>
+</Window>

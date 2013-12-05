@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Media;
@@ -27,6 +28,12 @@ namespace ProcessorsToolkit.Model
                 var srcUri = IsOpen ? "pack://application:,,,/Images/Folder_Open.png" : "pack://application:,,,/Images/Folder_Closed.png";
                 return (ImageSource)new BitmapImage(new Uri(srcUri));
             }
+        }
+
+        public void CreateIfNotExists()
+        {
+            if (!Directory.Exists(Fullpath))
+                Directory.CreateDirectory(Fullpath);
         }
 
 

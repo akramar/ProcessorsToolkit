@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="ProcessorsToolkit.View.Interbank.UploadWindow.ConditionMatcherUC"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="300" HorizontalAlignment="Stretch"
+             Loaded="ConditionMatcherUC_OnLoaded" >
+    <Grid>
+        <Grid Margin="0,10,0,38">
+            <ListView Name="FilesListBox" Focusable="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Margin="10,0"  >
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <WrapPanel HorizontalAlignment="Stretch" Height="20">
+                            <!--<TextBlock Width="100" Tag="{Binding Path=NameWithExt}" Text="{Binding Path=NameWithExt}" Margin="0,0,6,0" Cursor="Hand" x:Name="FileListBoxItem" ></TextBlock>-->
+
+                            <ComboBox Width="100" Initialized="AddConditionsToCombo" Uid="{Binding Path=Id}" 
+                                    SelectionChanged="FileCondChanged" BorderBrush="{x:Null}" Background="{x:Null}" BorderThickness="0"></ComboBox>
+
+                            <TextBlock Text="{Binding Path=NameWithExt}" HorizontalAlignment="Stretch" Width="361" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Height="16" />
+                             
+                            
+                        </WrapPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+
+            </ListView>
+
+        </Grid>
+        <Grid VerticalAlignment="Bottom">
+            <Button Name="UploadBtn" Width="60" Height="23" Content="Upload" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="UploadBtn_Click" IsEnabled="False" Margin="0,0,30,10"/>
+
+        </Grid>
+    </Grid>
+</UserControl>

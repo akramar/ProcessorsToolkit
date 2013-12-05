@@ -1,0 +1,17 @@
+﻿<Window x:Class="ProcessorsToolkit.View.Tools.AllFilesListerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="All Files" Height="400" Width="520"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowInTaskbar="False">
+
+    <Grid>
+        <TextBox Name="FilesListBox" Margin="10,10,10,48" HorizontalAlignment="Stretch" TextWrapping="Wrap" 
+                 VerticalScrollBarVisibility="Auto" AcceptsReturn="True"/>
+        <CheckBox Content="Remove borrower name if prefixed" HorizontalAlignment="Left" Margin="62,0,0,10" 
+                  VerticalAlignment="Bottom" IsChecked="True" Click="RemoveBorrName_Clicked"/>
+
+        <Button Width="60" Height="23" Content="Close" HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                Click="ButtonBase_OnClick" Margin="0,0,30,10"/>
+
+    </Grid>
+</Window>

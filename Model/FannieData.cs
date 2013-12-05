@@ -11,6 +11,7 @@ namespace ProcessorsToolkit.Model
     {
         //http://lmhelp.velocify.com/entries/21662265-Fannie-Mae-3-2-FM3-2-FannieMae-File-Format
 
+        public bool HasFannieData { get; set; }
         public string BorrNameFirst { get; set; }
         public string BorrNameMI { get; set; }
         public string BorrNameLast { get; set; }
@@ -81,8 +82,8 @@ namespace ProcessorsToolkit.Model
         public double AppraisedValue { get; set; }
         public string SubjAddr_Combined { get { return SubjAddrStreet + ", " + CombineCityStateZip(SubjAddrCity, SubjAddrState, SubjAddrZip); } }
         //TODO: include appraised value data from FNM
-        public double LTV { get { return (!LoanAmtBase.Equals(0.0) && !PurchPrice.Equals(0.0)) ? Math.Round(((LoanAmtBase / PurchPrice) * 100), 3) : 0.0; } }
-        public string LTV_Pretty { get { return (!LTV.Equals(0.0)) ? (LTV.ToString("{0:###}%")) : "N/A"; } }
+        public double LTV { get { return (!LoanAmtBase.Equals(0.0) && !PurchPrice.Equals(0.0)) ? Math.Round(((LoanAmtBase / PurchPrice)*100), 3) : 0.0; } }
+        public string LTV_Pretty { get { return (!LTV.Equals(0.0)) ? String.Format("{0:P3}", LTV/100) : "N/A"; } }
         public double LoanAmtGross { get { return (!FundingFeeFinanced.Equals(0.0) ? (LoanAmtBase + FundingFeeFinanced) : LoanAmtBase); } }
         public DateTime DisclosureDate
         {
@@ -111,7 +112,11 @@ namespace ProcessorsToolkit.Model
 
             //var fileInfo = new FileInfo(pathToFile);
 
-            var fannieDataLines = File.ReadAllLines(fannieFileInfo.FullName).ToList();
+            //http://stackoverflow.com/questions/8037070/whats-the-fastest-way-to-read-a-text-file-line-by-line
+
+            //var fannieDataLines = File.ReadAllLines(fannieFileInfo.FullName).ToList();
+            var fannieDataLines = File.ReadLines(fannieFileInfo.FullName).ToList();
+
 
             //Address line
             var addrString = fannieDataLines.FirstOrDefault(l => l.StartsWith("02A"));
@@ -237,6 +242,8 @@ namespace ProcessorsToolkit.Model
                 OriginatorCompanyState = brokerString.Substring(222, 2);
                 OriginatorCompanyZip = brokerString.Substring(224, 9).Trim();
             }
+
+            HasFannieData = true;
         }
 
         private static DateTime ParseDate(string dateRaw)

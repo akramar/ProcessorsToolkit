@@ -8,15 +8,14 @@ namespace ProcessorsToolkit.Model.Interbank.UploadSession
 {
     class SingleFileUpload
     {
-        //MAKE THIS STATIC AGAIN
-        public int HttpUploadFile(string filePath, List<Tuple<string, string>> formItemsList,
+        public static int HttpUploadFile(string filePath, List<Tuple<string, string>> formItemsList,
              CookieCollection sessionCookies, string loanNum)
         {
             int responseCode = 0;
             if (false) // skip for debug, we know this portion works
             {
                 System.Threading.Thread.Sleep(2000);
-                responseCode = 1;
+                responseCode = 0;
 
             }
             else
@@ -39,7 +38,6 @@ namespace ProcessorsToolkit.Model.Interbank.UploadSession
                 wr.Method = "POST";
                 wr.KeepAlive = true;
                 wr.Credentials = CredentialCache.DefaultCredentials;
-                //wr.CookieContainer = ImageFlowDataFetcher.CookieThief.GetUriCookieContainer(new Uri("https://imageflow.prmg.net"));
                 wr.CookieContainer = new CookieContainer();
                 wr.CookieContainer.Add(sessionCookies);
                 wr.Accept = "text/html, application/xhtml+xml, */*";
@@ -70,7 +68,7 @@ namespace ProcessorsToolkit.Model.Interbank.UploadSession
                 }
                 rs.Write(boundarybytes, 0, boundarybytes.Length);
 
-
+                //TODO: Improve using http://stackoverflow.com/questions/7124797/httprequest-and-post
                 /************ This is the actual file upload ****************/
                 var fileNameOnly = Path.GetFileName(filePath);
                 const string headerTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\nContent-Type: {2}\r\n\r\n";

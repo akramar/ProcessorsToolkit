@@ -1,0 +1,9 @@
+﻿<Window x:Class="ProcessorsToolkit.View.Tools.DownloadProgressWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         Height="120" Width="300"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize" WindowStyle="ToolWindow" ShowInTaskbar="False" Loaded="DownloadProgressWindow_OnLoaded" >
+    <Grid>
+        <Label HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18">Downloading Form...</Label>
+    </Grid>
+</Window>
