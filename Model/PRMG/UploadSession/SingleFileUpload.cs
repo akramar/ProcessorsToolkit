@@ -28,16 +28,16 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
             {
                 //http://stackoverflow.com/questions/566462/upload-files-with-httpwebrequest-multipart-form-data
 
-                string url = "https://imageflow.prmg.net:443/xsuite/xapps/xdoc/webservice/xWsProcess.aspx";
+                const string postUrl = "https://imageflow.prmg.net:443/xsuite/xapps/xdoc/webservice/xWsProcess.aspx";
 
-                System.Diagnostics.Debug.WriteLine(string.Format("Uploading {0} to {1}", file, url));
+                System.Diagnostics.Debug.WriteLine(string.Format("Uploading {0} to {1}", file, postUrl));
                 //log.Debug(string.Format("Uploading {0} to {1}", file, url));
-                string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
+                var boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
                 byte[] boundarybytes = System.Text.Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
 
 
 
-                HttpWebRequest wr = (HttpWebRequest)WebRequest.Create(url);
+                HttpWebRequest wr = (HttpWebRequest)WebRequest.Create(postUrl);
                 wr.Timeout = 1200000;
                 wr.ContentType = "multipart/form-data; boundary=" + boundary;
                 wr.Method = "POST";
@@ -74,7 +74,7 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
                     rs.Write(boundarybytes, 0, boundarybytes.Length);
                     //string formitem = string.Format(formdataTemplate, key, nvc[key]);
                     string formitem = string.Format(formdataTemplate, formpair.Item1, formpair.Item2);
-                    byte[] formitembytes = System.Text.Encoding.UTF8.GetBytes(formitem);
+                    byte[] formitembytes = Encoding.UTF8.GetBytes(formitem);
                     rs.Write(formitembytes, 0, formitembytes.Length);
                 }
                 rs.Write(boundarybytes, 0, boundarybytes.Length);

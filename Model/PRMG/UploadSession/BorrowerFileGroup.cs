@@ -210,8 +210,8 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
                     new Tuple<string, string>("xFileName", sourceFile.NameWithExt)
                 };
             var docTypeId = (_parentVM.SelectedUploadType == UploadWindowVM.UploadTypes.PTDConditions)
-                                ? FileToUpload.DocTypeId(sourceFile.ConditionId)
-                                : FileToUpload.DocTypeId("-1"); //-1 is our submission indicator
+                                ? FileToUpload.ConditionNumToDocTypeId(sourceFile.ConditionId)
+                                : FileToUpload.ConditionNumToDocTypeId("-1"); //-1 is our submission indicator
 
             newFormVals.Add(new Tuple<string, string>("xDocTypeId", docTypeId));
             newFormVals.Add(new Tuple<string, string>("xWsPayload", PayloadEnvelope.CreateEnvelopeString(newFormVals)));

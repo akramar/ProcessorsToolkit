@@ -115,6 +115,7 @@
     <Compile Include="Model\BorrDirWatcher.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Model\Common.UploadSession\DocuTracConnection.cs" />
     <Compile Include="Model\Common.UploadSession\MultipartUploadForm.cs" />
     <Compile Include="Model\EventArgs.cs" />
     <Compile Include="Model\FannieData.cs" />

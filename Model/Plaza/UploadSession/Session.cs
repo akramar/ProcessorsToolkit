@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Web;
 using HtmlAgilityPack;
+using ProcessorsToolkit.Model.Common.UploadSession;
 using ProcessorsToolkit.ViewModel;
 
 namespace ProcessorsToolkit.Model.Plaza.UploadSession
@@ -28,6 +29,13 @@ namespace ProcessorsToolkit.Model.Plaza.UploadSession
         {
             SessionCookies = new CookieCollection();
         }
+
+        //***** Internally, Plaza uses DocuTrac (now under Ellie Mae), so link 4 may be able to view current loans if we have a container number
+        // https://imageflow.prmg.net:443/xsuite/xapps/xdoc/webservice/xWsProcess.aspx
+        // https://imageflow.prmg.net            /xsuite/xapps/xdoc/docUpload/default.aspx?xProjectId=1000&xToolId=DOCUMENTUPLOAD&sessiondata=2930647566935531520&xContainerKey=215743
+        // https://docutrac.plazahomemortgage.com/xsuite/xapps/xdoc/containerViewer/default.aspx?xProjectId=1000&xToolId=CONTAINERVIEWER&xContainerKey=08%3bPQ
+        // [4] https://docutrac.plazahomemortgage.com/xsuite/xapps/xdoc/docUpload/default.aspx?xProjectId=1000&xToolId=CONTAINERVIEWER&xContainerKey=08%3bPQ
+        //
 
         public void Step1_GetHomepage()
         {
@@ -227,8 +235,8 @@ namespace ProcessorsToolkit.Model.Plaza.UploadSession
             */
 
             Debug.WriteLine("Hit Step4_GetUploadCredentials");
-            Debug.WriteLine("SLEEPING THREAD");
-            System.Threading.Thread.Sleep(4000);
+            //Debug.WriteLine("SLEEPING THREAD");
+            //System.Threading.Thread.Sleep(4000);
 
             var getUrl = "https://au.loan-score.com/dodocsauto.aspx?AppNo=" + appNum + "&md=1";
 
@@ -311,8 +319,8 @@ namespace ProcessorsToolkit.Model.Plaza.UploadSession
             */
 
             Debug.WriteLine("Hit Step5_GetUploadPage");
-            Debug.WriteLine("SLEEPING THREAD");
-            System.Threading.Thread.Sleep(4000);
+            //Debug.WriteLine("SLEEPING THREAD");
+            //System.Threading.Thread.Sleep(4000);
 
             var fieldsToPost = new Dictionary<string, string>
                 {
@@ -324,10 +332,16 @@ namespace ProcessorsToolkit.Model.Plaza.UploadSession
             var postUrl = "https://docutrac.plazahomemortgage.com:8080/brokeruploadpage/Default.aspx?doctracfn=DOCUPLOADLS&loannumber=" + loanNum;
             var referer = "https://au.loan-score.com/dodocsauto.aspx?AppNo=" + appNum + "&md=1";
 
-            var responseObj = ConnectionMethods.DocuTracPost(postUrl, SessionCookies, postData, referer);
-            
+            var dtCookies = new CookieCollection();
+            var responseObj = DocuTracConnectionMethods.DocuTracPost(postUrl, "docutrac.plazahomemortgage.com:8080", SessionCookies, postData, referer);
+
+            dtCookies.Add(responseObj.ResponseCookies);
+            SessionCookies.Add(responseObj.ResponseCookies);
+
             var responseHtmlDoc = new HtmlDocument();
             responseHtmlDoc.LoadHtml(responseObj.ResponseHtml);
+            
+
 
             // /html[1]/body[1]/form[1]/div[1]
             

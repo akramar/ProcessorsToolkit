@@ -23,7 +23,7 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
         //public LoanSearchResultItem MatchedLoan { get; set; }
         //public string[] SchemaIds {get;set;}
 
-        public static string DocTypeId(string conditionNum) //This needs to be turned into a translator from DocSchemaIds
+        public static string ConditionNumToDocTypeId(string conditionNum) //This needs to be turned into a translator from DocSchemaIds
         {
             return DocSchemaIds.FirstOrDefault(dsi => dsi.Value == conditionNum).Key;
             /*             get

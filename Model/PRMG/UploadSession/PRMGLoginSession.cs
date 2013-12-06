@@ -11,6 +11,7 @@ using System.IO;
 using System.Xml.Linq;
 using System.Xml;
 using System.Runtime.InteropServices;
+using ProcessorsToolkit.Model.Common.UploadSession;
 
 namespace ProcessorsToolkit.Model.PRMG.UploadSession
 {
@@ -324,15 +325,32 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
             System.Diagnostics.Debug.WriteLine("Hit Step8_GetImageFlowLaunchData");
 
 
-           // var responseHtml = HttpGet(("https://www.prmglending.net/services/ImageFlowLaunch.aspx?ToolId=DOCUMENTUPLOAD&applyId="
-           //     + ApplyId + "&userId=" + CurrentUserId), "");
-            var responseObj = ConnectionMethods.PRMGGet("https://www.prmglending.net/services/ImageFlowLaunch.aspx?xProjectId=1000&ToolId=FILECATALOG", _sessionCookies);
+            //this causes probles if applyID's loan is not allowing uploads yet. Use FILECATALOG below
+            // var responseHtml = HttpGet(("https://www.prmglending.net/services/ImageFlowLaunch.aspx?ToolId=DOCUMENTUPLOAD&applyId=" 
+            //     + ApplyId + "&userId=" + CurrentUserId), "");
+            var responseObj = ConnectionMethods.PRMGGet("https://www.prmglending.net/services/ImageFlowLaunch.aspx?xProjectId=1000&ToolId=FILECATALOG",
+                    _sessionCookies);
             _sessionCookies.Add(responseObj.ResponseCookies);
 
             if (!String.IsNullOrEmpty(responseObj.RedirectHeaderVal))
                 ParseRedirectHeader(responseObj.RedirectHeaderVal);
             //_parentVM.OnSuccessfulPRMGLogin();
+        }
 
+        public CookieCollection Step9_InitiateDocuTrac()
+        {
+
+            var dtCookies = new CookieCollection();
+
+            var destUrl = "/xsuite/xapps/xdoc/axProjectTool.aspx?xProjectId=1000&xToolId=FILECATALOG&sessiondata=" + ImgFlowSessionKey;
+
+            var url = "https://imageflow.prmg.net/xLogonoem.aspx?ReturnUrl=" + HttpUtility.UrlEncode(destUrl)
+                      + "&xProjectId=1000&xToolId=FILECATALOG&sessiondata=" + ImgFlowSessionKey;
+
+            var responseObj = ConnectionMethods.ImgFlowGet(url, dtCookies);
+            dtCookies.Add(responseObj.ResponseCookies);
+
+            return dtCookies;
 
         }
 
@@ -345,160 +363,6 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
         }
 
 
-        private string PRMGGet(string targetUrl, string referer = "")
-        {
-            /*
-            First add this: using System.IO.Compression;
-
-            Next add the following to the request headers:
-            webRequest.Headers.Add(System.Net.HttpRequestHeader.AcceptEncoding, "gzip");
-
-            After creating a response add this code to get the response stream:
-            StreamReader str;
-            //The following is to check if the server sending the response supports Gzip
-            if (webResponse.Headers.Get("Content-Encoding") != null &&
-            webResponse.Headers.Get("Content-Encoding").ToLower() == "gzip")
-            {
-            str = new StreamReader(new GZipStream(webResponse.GetResponseStream(), CompressionMode.Decompress));
-            }
-            else
-            {
-            str = new StreamReader(webResponse.GetResponseStream());
-            }
-            */
-
-            var sessionRequest = (HttpWebRequest)WebRequest.Create(targetUrl);
-            //_sessionRequest.Proxy = null; //Skipping sarrch for proxy saves a lot of time but maybe less durable
-            sessionRequest.AllowAutoRedirect = false;
-            sessionRequest.Method = "GET";
-            sessionRequest.Accept = "text/html, application/xhtml+xml, */*";
-            if (referer != String.Empty)
-                sessionRequest.Referer = referer;
-            sessionRequest.UserAgent = "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)";
-            sessionRequest.Host = "www.prmglending.net";
-            sessionRequest.KeepAlive = true;
-            sessionRequest.CookieContainer = new CookieContainer();
-            sessionRequest.CookieContainer.Add(_sessionCookies);
-            sessionRequest.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-
-            string responseHtml = null;
-
-            using (var sessionResponse = (HttpWebResponse) sessionRequest.GetResponse())
-            {
-                try
-                {
-                    if (sessionResponse.Headers["Location"] != null)
-                        ParseRedirectHeader(sessionResponse.Headers["Location"]);
-
-                    if (sessionResponse.Cookies != null && sessionResponse.Cookies.Count != 0)
-                        _sessionCookies.Add(sessionResponse.Cookies);
-                    
-                    var responseStream = sessionResponse.GetResponseStream();
-                    if (responseStream != null)
-                        responseHtml = new StreamReader(responseStream).ReadToEnd();
-
-                    //if (responseHtml != null)
-                     //   _sessionCookies.Add(sessionResponse.Cookies);
-
-                }
-                catch (Exception ex)
-                {
-                }
-            }
-            return responseHtml;
-        }
-
-        private string PRMGPost(string targetUrl, string refer, string postData)
-        {
-            var sessionRequest = (HttpWebRequest)WebRequest.Create(targetUrl);
-
-
-            //sessionRequest = (HttpWebRequest)WebRequest.Create(targetUrl);
-            //_sessionRequest.Proxy = null;
-            sessionRequest.AllowAutoRedirect = false;
-            sessionRequest.Method = "POST";
-            sessionRequest.Accept = "text/html, application/xhtml+xml, */*";
-            sessionRequest.Referer = refer;
-            sessionRequest.UserAgent = "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)";
-            sessionRequest.ContentType = "application/x-www-form-urlencoded";
-            sessionRequest.Host = "www.prmglending.net";
-            sessionRequest.KeepAlive = true;
-            sessionRequest.CookieContainer = new CookieContainer();
-            sessionRequest.CookieContainer.Add(_sessionCookies);
-                        
-            var enconding = new ASCIIEncoding();
-            var postDataBytes = enconding.GetBytes(postData);
-            sessionRequest.ContentLength = postDataBytes.Length;
-
-            sessionRequest.GetRequestStream().Write(postDataBytes, 0, postDataBytes.Length);
-
-
-            //using (var writer = new StreamWriter(sessionRequest.GetRequestStream(), Encoding.ASCII))
-           // {
-            //    writer.Write(postData);
-            //}
-
-            string responseHtml = null;
-            using (var sessionResponse = (HttpWebResponse) sessionRequest.GetResponse())
-            {
-                try
-                {
-                    if (sessionResponse.Cookies != null && sessionResponse.Cookies.Count != 0)
-                        _sessionCookies.Add(sessionResponse.Cookies);
-
-                    var responseStream = sessionResponse.GetResponseStream();
-                    if (responseStream != null)
-                        responseHtml = new StreamReader(responseStream).ReadToEnd();
-                    //if (responseHtml != null)
-                     //   _sessionCookies.Add(sessionResponse.Cookies);
-                }
-                catch (Exception ex)
-                {
-                }
-            }
-            return responseHtml;
-        }
-
-        private void PRMGHead(string targetUrl, string referer)
-        {
-
-            //sessionRequest = null;
-            var sessionRequest = (HttpWebRequest)WebRequest.Create(targetUrl);
-
-            //sessionRequest = (HttpWebRequest)WebRequest.Create(targetUrl);
-            //_sessionRequest.Proxy = null;
-            sessionRequest.AllowAutoRedirect = false;
-            sessionRequest.Method = "HEAD";
-            sessionRequest.Accept = "text/html, application/xhtml+xml, */*";
-            if (referer != String.Empty)
-                sessionRequest.Referer = referer;
-            sessionRequest.UserAgent = "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)";
-            sessionRequest.Host = "www.prmglending.net";
-            sessionRequest.KeepAlive = true;
-            sessionRequest.CookieContainer = new CookieContainer();
-            sessionRequest.CookieContainer.Add(_sessionCookies);
-            sessionRequest.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-
-            using (var sessionResponse = (HttpWebResponse) sessionRequest.GetResponse())
-            {
-                try
-                {
-                    if (sessionResponse.Headers["Location"] != null)
-                        ParseRedirectHeader(sessionResponse.Headers["Location"]);
-
-                    if (sessionResponse.Cookies != null && sessionResponse.Cookies.Count != 0)
-                        _sessionCookies.Add(sessionResponse.Cookies);
-
-                   // if (sessionResponse.Cookies != null)
-                    //    _sessionCookies.Add(sessionResponse.Cookies);
-                }
-                catch (Exception ex)
-                {
-                }
-            }
-            //return responseHtml;
-        }
-
         private void ParseRedirectHeader(string locationHeader)
         {
             //Used when catching redirect from PRMG to Imageflow
@@ -508,7 +372,7 @@ namespace ProcessorsToolkit.Model.PRMG.UploadSession
 
             var redirectHeader = new Uri(locationHeader);
             var sessionData = HttpUtility.ParseQueryString(redirectHeader.Query).Get("sessiondata");
-            var containerKey = HttpUtility.ParseQueryString(redirectHeader.Query).Get("xContainerKey");
+            //var containerKey = HttpUtility.ParseQueryString(redirectHeader.Query).Get("xContainerKey");
 
             ImgFlowSessionKey = sessionData;
         }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using ProcessorsToolkit.Model.Common.UploadSession;
 using ProcessorsToolkit.Model.PRMG.UploadSession;
 using ProcessorsToolkit.View.PRMGUploadWindow;
 //using System.Net;
@@ -12,6 +14,7 @@ namespace ProcessorsToolkit.ViewModel.PRMG
     {
         public  string ImgFlowSessionKey { get; set; }
         public  string ImgFlowContainerKey { get; set; }
+        public CookieCollection DocuTracCookies { get; set; }
 
         public  BorrowerFileGroup WorkingFileList;
         public  PRMGLoginSession CurrPRMGSession { get; set; }
@@ -141,6 +144,9 @@ namespace ProcessorsToolkit.ViewModel.PRMG
                         CurrPRMGSession.Step4_PostSecretAnswer();
                         CurrPRMGSession.Step6_PostLoginPassword();
                         CurrPRMGSession.Step8_GetImageFlowLaunchData();
+                        DocuTracCookies = CurrPRMGSession.Step9_InitiateDocuTrac();
+                        var dtSess = new DocuTracConnection();
+                        dtSess.Blah(DocuTracCookies, "http://imageflow.prmg.net:443", "215743");
                         ImgFlowSessionKey = CurrPRMGSession.ImgFlowSessionKey;
 
                     }

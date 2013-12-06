@@ -26,6 +26,7 @@ namespace ProcessorsToolkit.Model.Plaza.UploadSession
             return Head(targetUrl, LoanScoreHeader, cookies, referer);
         }
 
+        /*
         static protected internal GetResponse DocuTracGet(string targetUrl, CookieCollection cookies, string referer = "")
         {
             return Get(targetUrl, DocuTracHeader, cookies, referer);
@@ -40,5 +41,6 @@ namespace ProcessorsToolkit.Model.Plaza.UploadSession
         {
             return Head(targetUrl, DocuTracHeader, cookies, referer);
         }
+        */
     }
 }
