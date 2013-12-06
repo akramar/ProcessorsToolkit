@@ -183,8 +183,11 @@ namespace ProcessorsToolkit.Model.Interbank.UploadSession
             FormVals["ctl00%24ContentPlaceHolder1%24dropdownlistKeyDates"] = "Changed";
             FormVals["ctl00%24ContentPlaceHolder1%24dropdownlistLoanPurpose"] = "All";
 
-            FormVals["ctl00%24ContentPlaceHolder1%24textboxFromDate"] = "7%2F1%2F2013";
-            FormVals["ctl00%24ContentPlaceHolder1%24textboxToDate"] = "9%2F29%2F2013";
+            var searchDateFrom = HttpUtility.UrlEncode(DateTime.UtcNow.AddMonths(-3).ToString("d"));
+            var searchDateTo = HttpUtility.UrlEncode(DateTime.UtcNow.ToString("d"));
+
+            FormVals["ctl00%24ContentPlaceHolder1%24textboxFromDate"] = searchDateFrom;
+            FormVals["ctl00%24ContentPlaceHolder1%24textboxToDate"] = searchDateTo;
             FormVals["ctl00%24ContentPlaceHolder1%24textBoxQuickFind"] = "";
             //_formVals["ctl00%24ContentPlaceHolder1%24radGridPipeline%24ctl00%24ctl04%24GECBtnExpandColumn"] = "+"; //ctl00$ContentPlaceHolder1$radGridPipeline$ctl00$ctl04$GECBtnExpandColumn <- UW Denied
                                                                                                                    //ctl00$ContentPlaceHolder1$radGridPipeline$ctl00$ctl07$GECBtnExpandColumn <- UW approved
